@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trailme - Leaderboard</title>
+
+    <!--== Favicon ==-->
+    <!-- <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon" /> -->
+
+    <script src="confetti.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+
+
+    <!--== Google Fonts ==-->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,300;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- build:css assets/css/app.min.css -->
+    <!--== jqvmap Min CSS ==-->
+    <link href="assets/css/jqvmap.min.css" rel="stylesheet" />
+    <!--== ChartJS Min CSS ==-->
+    <link href="assets/css/chart.min.css" rel="stylesheet" />
+    <!--== DataTables Min CSS ==-->
+    <link href="assets/css/datatables.min.css" rel="stylesheet" />
+    <!--== Select2 Min CSS ==-->
+    <link href="assets/css/select2.min.css" rel="stylesheet" />
+    <!--== Bootstrap Min CSS ==-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!--== Main Style CSS ==-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- endbuild -->
+
+
+
+    <style>
+        .bounce-enter-active {
+            animation: bounce-in 0.5s;
+        }
+
+        .bounce-leave-active {
+            animation: bounce-in 0.5s reverse;
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.25);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+        .mapboxgl-marker {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid gray;
+            background-color: lightblue;
+        }
+    </style>
+    <style>
+        .form-search {
+            box-sizing: border-box;
+            height: 50px;
+            border: 0;
+            /* border-radius: 20px; */
+            width: 100%;
+            padding: 0 20px 0 20px;
+            background: none;
+            /* box-shadow: 0px 0px 30px 0px rgb(0 0 0 / 15%); */
+        }
+
+        .sorticon {
+            width: 17px;
+            margin-left: 5px;
+            opacity: .4;
+        }
+
+        .sorticon:hover {
+            cursor: pointer;
+        }
+
+        .filterbutton {
+            width: 100%;
+            padding: 12px;
+            padding-right: 25px;
+            padding-top: 16px;
+        }
+
+        .filterbutton:hover {
+            cursor: pointer;
+        }
+
+        .filtertag {
+            display: inline-block;
+            border: 2px solid #008cd1;
+            border-radius: 20px;
+            color: #008cd1;
+            padding: 5px 15px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filtertag:hover {
+            display: inline-block;
+            border: 2px solid #2da04d;
+            border-radius: 20px;
+            color: #2da04d;
+        }
+    </style>
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script type="module">
+
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+        import {getAnalytics} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+
+        import {doc, onSnapshot, getFirestore} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyAjvRZXmI5rF9rVmZF7hcFy13t26d_fdyY",
+
+            authDomain: "trailme-leaderboard.firebaseapp.com",
+
+            projectId: "trailme-leaderboard",
+
+            storageBucket: "trailme-leaderboard.appspot.com",
+
+            messagingSenderId: "134824345234",
+
+            appId: "1:134824345234:web:d6a4206908df27812b304b",
+
+            measurementId: "G-ZSWKJ725KH"
+
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        const db = getFirestore(app);
+
+        const queryString = window.location.search
+        const urlParams = new URLSearchParams(queryString)
+        const courseid = urlParams.get('courseid')
+        const zoom = urlParams.get('zoom')
+        const trackinguserid = urlParams.get('userid')
+        setTimeout(() => {
+            VueApp.$data.trackinguserid = trackinguserid
+            VueApp.$data.zoom = zoom
+        }, 10);
+        console.log(trackinguserid)
+        console.log(courseid)
+        let firstin = true
+        // var map
+
+        function initmap(mapboxUrl) {
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoidWhleSIsImEiOiJjank0YTllNWwxMTQzM25sZ3d1eWZwbjZmIn0.QKWNjXBpjvLszcNJkNXILw';
+            map = new mapboxgl.Map({
+                container: 'mapboxframe',
+                // style: "mapbox://styles/uhey/clcr1op2s000m14o1trv5imdy"
+                style: mapboxUrl
+            });
+
+
+
+            map.on('load', () => {
+
+
+                map.loadImage(
+                    'https://i.ibb.co/CB8YgPQ/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb59e6a0-357249031518813179368.png',
+                    // 'https://banner2.cleanpng.com/20180216/uke/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb338d26.8318981415188131792112.jpg',
+                    (error, image) => {
+                        if (error) throw error;
+
+                        // Add the image to the map style.
+                        map.addImage('cat', image);
+
+                        // Add a data source containing one point feature.
+                        map.addSource('point', {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'FeatureCollection',
+                                'features': [
+                                    {
+                                        'type': 'Feature',
+                                        'geometry': {
+                                            'type': 'Point',
+                                            'coordinates': [114.261706, 22.301909]
+                                        }
+                                    },
+                                    {
+                                        'type': 'Feature',
+                                        'geometry': {
+                                            'type': 'Point',
+                                            'coordinates': [114.261756, 22.301919]
+                                        }
+                                    }
+                                ]
+                            }
+                        });
+
+                        // Add a layer to use the image to represent the data.
+                        map.addLayer({
+                            'id': 'points',
+                            'type': 'symbol',
+                            'source': 'point', // reference the data source
+                            'layout': {
+                                'icon-image': 'cat', // reference the image
+                                'icon-size': 0.15
+                            }
+                        });
+
+                        startlivetracking()
+
+                    }
+                );
+
+
+                onSnapshot(
+                    doc(db, "Beacons", courseid),
+                    {includeMetadataChanges: true},
+                    (doc) => {
+
+                        let nowdata = doc.data()
+                        let beaconpoints = []
+                        for (var j in nowdata) {
+                            beaconpoints.push({
+                                'type': 'Feature',
+                                'geometry': {
+                                    'type': 'Point',
+                                    'coordinates': [nowdata[j].longitude, nowdata[j].latitude],
+                                    tolerance: 0
+                                }
+                            })
+                        }
+                        if (map) {
+                            if (!map.getSource('point')) {
+                                map.loadImage(
+                                    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/WhiteDot.svg/1024px-WhiteDot.svg.png',
+                                    (error, image2) => {
+                                        if (error) throw error;
+
+                                        // Add the image to the map style.
+                                        map.addImage('beacon', image2);
+
+                                        // Add a data source containing one point feature.
+                                        map.addSource('beacon', {
+                                            'type': 'geojson',
+                                            'data': {
+                                                'type': 'FeatureCollection',
+                                                'features': beaconpoints
+                                            }
+                                        });
+
+                                        // Add a layer to use the image to represent the data.
+                                        map.addLayer({
+                                            'id': 'beacons',
+                                            'type': 'symbol',
+                                            'source': 'beacon', // reference the data source
+                                            'layout': {
+                                                'icon-image': 'beacon', // reference the image
+                                                'icon-size': 0.01
+                                            }
+                                        });
+                                        console.log(zoom)
+                                        console.log(parseFloat(zoom) || 15.2)
+                                        map.flyTo({
+                                            center: beaconpoints[0].geometry.coordinates,
+                                            speed: 1,
+                                            zoom: parseFloat(zoom) || 15.2,
+                                        });
+
+
+                                        // startlivetracking()
+
+                                    }
+                                );
+
+                            }
+
+                        }
+
+
+                    });
+
+
+            });
+
+
+        }
+
+
+        let userIdDetails = {}
+        const unsub = onSnapshot(
+            doc(db, "LeaderBoardLive", courseid),
+            {includeMetadataChanges: true},
+            (doc) => {
+                console.log('updated')
+                let nowdata = doc.data()
+                let racestat = {}
+                let tempdata = []
+                for (var j in nowdata.data)
+                    tempdata.push(nowdata.data[j])
+                nowdata.data = tempdata
+                nowdata.data.map(x => {
+
+                    if (!userIdDetails[x.userId])
+                        userIdDetails[x.userId] = x
+                    else if (x.createdAt.seconds > userIdDetails[x.userId].createdAt.seconds)
+                        userIdDetails[x.userId] = x
+                    racestat[x.racerStatus] = racestat[x.racerStatus] ? racestat[x.racerStatus] + 1 : 1
+
+
+                })
+                VueApp.$data.racerdata = nowdata
+                VueApp.$data.stat = racestat
+                VueApp.sortByCompleteTime()
+
+
+                if (!map) initmap(nowdata.courseDetails.mapboxUrl)
+
+
+                if (!firstin) {
+
+                } else {
+                    firstin = false
+                }
+
+
+            });
+
+
+
+        function startlivetracking() {
+            const unsub2 = onSnapshot(
+                doc(db, "LiveMap", courseid),
+                {includeMetadataChanges: true},
+                (doc) => {
+                    let nowdata = doc.data()
+                    VueApp.$data.livemapdata = nowdata
+                    VueApp.updatemap()
+                });
+        }
+
+
+
+    </script>
+</head>
+
+<body style="background: linear-gradient(#008cd1,#2da04d);">
+    <div id="app">
+
+        <div v-if="!trackinguserid" class="content-section-2" id="leaderboard"
+            style="position: fixed; top: 0; left: 0; opacity: .9; height: 85vh; width: 100vw; z-index: 9999; overflow-y: scroll;  ">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-12 ">
+                        <div class="list-view table-responsive"
+                            style="border-radius: 20px; margin-bottom: 20px; overflow: hidden;" id="list-view">
+                            <div class="row">
+                                <div class="col-11"> <input @keyup="searchuser($event)" @change="searchuser($event)"
+                                        v-model="searchinput" placeholder="Enter Your Keywords" type="search"
+                                        class="form-search"></div>
+
+                                <!-- <div class="col-1"> <img
+                                        src="data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 133.33 136'%3E%3Cg id='surface1'%3E%3Cpath d='M94.11,80.7A51.13,51.13,0,1,0,78.38,95.19l37.71,37.48a10.7,10.7,0,1,0,15.52-14.74c-.13-.14-.25-.26-.39-.39ZM52.33,84.2a33,33,0,1,1,33-33.05,33,33,0,0,1-33,33.05Z' transform='translate(-1.22 0)' fill='%23008cd2'/%3E%3C/g%3E%3C/svg%3E"
+                                        style="width: 100%; padding: 12px; padding-right: 25px;">
+                                </div> -->
+                                <div class="col-1"> <img src="https://cdn-icons-png.flaticon.com/512/6590/6590958.png"
+                                        class="filterbutton" @click="togglefiltermenu">
+                                </div>
+
+
+                                <div class="col-12" v-if="menuopen">
+                                    <div class="filtertag" @click="filtertable('all')">All</div>
+                                    <div class="filtertag" @click="filtertable('topf')">Top Females</div>
+                                    <div class="filtertag" @click="filtertable('topm')">Top Males</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-12 ">
+                        <div class="list-view table-responsive" style="border-radius: 20px;" id="list-view">
+                            <table class="list-view__table display table">
+                                <thead class="list-view__head">
+                                    <tr>
+                                        <th>Ranking<img src="https://cdn-icons-png.flaticon.com/512/4662/4662255.png"
+                                                class="sorticon" @click="sorttableby('ranking')">
+                                        </th>
+                                        <th>Bib Num<img src="https://cdn-icons-png.flaticon.com/512/4662/4662255.png"
+                                                class="sorticon" @click="sorttableby('bib')"></th>
+                                        <th>Nick Name<img src="https://cdn-icons-png.flaticon.com/512/4662/4662255.png"
+                                                class="sorticon" @click="sorttableby('name')"></th>
+                                        <th>Gender<img src="https://cdn-icons-png.flaticon.com/512/4662/4662255.png"
+                                                class="sorticon" @click="sorttableby('gender')"></th>
+                                        <th>Status<img src="https://cdn-icons-png.flaticon.com/512/4662/4662255.png"
+                                                class="sorticon" @click="sorttableby('status')"></th>
+                                        <th>Tracking</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="list-view__body">
+                                    <Transition name="bounce">
+                                        <tr v-for="(racer,ind) in racerdata.data" :key="ind">
+                                            <template
+                                                v-if="(racer.racerStatus=='RACING' || racer.racerStatus=='PRESTART') && (!racer.hidden) ">
+                                                <td>{{racer.ranking!=9999999?racer.ranking:'/'}}</td>
+                                                <td>{{racer.bibNumber}}</td>
+                                                <td>{{racer.nickname}}</td>
+                                                <td>{{racer.gender=='male'?'M':'F'}}</td>
+                                                <td>{{racer.racerStatus}}</td>
+                                                <td><a @click="chooseracer(racer.userId)"><button
+                                                            style="width: 100%;">🏃🏾‍♂️</button></a>
+                                                </td>
+                                            </template>
+                                        </tr>
+
+                                    </Transition>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div v-if="trackinguserid"
+            style="position: fixed; bottom: 40px; left: 40px; opacity: .9; height: 100px; width: 100px; z-index: 9999;">
+            <a @click="cleartrackinguser()">
+                <button>
+                    <img src="https://static.thenounproject.com/png/1410611-200.png">
+                </button>
+            </a>
+        </div>
+
+        <div id='mapboxframe' style='width: 100vw; height: 100vh;'></div>
+    </div>
+
+
+    <script>
+        var map
+        const {createApp} = Vue
+
+        const VueApp = createApp({
+            async mounted() {
+
+            },
+            data() {
+                return {
+                    livemapdata: {},
+                    tracking: {},
+                    racerdata: {},
+                    stat: {},
+                    trackinguserid: '',
+                    tableMode: 'realtime',
+                    modeButton: 'Switch to Finish Mode',
+                    searchinput: "",
+                    menuopen: false
+                }
+            }, computed: {
+                racerdatabyid() {
+                    let temp = {}
+                    this.racerdata.data.map(x => {
+                        temp[x.userId] = x
+                    })
+                    return temp
+                }
+            },
+            methods: {
+                cleartrackinguser: function () {
+                    this.trackinguserid = ''
+                },
+                chooseracer: function (userId) {
+                    this.trackinguserid = userId
+                    this.updatemap()
+                },
+                msToTime: function (duration) {
+                    duration = duration * 1000
+                    var milliseconds = Math.floor((duration % 1000) / 100),
+                        seconds = Math.floor((duration / 1000) % 60),
+                        minutes = Math.floor((duration / (1000 * 60)) % 60),
+                        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+                    hours = (hours < 10) ? "0" + hours : hours;
+                    minutes = (minutes < 10) ? "0" + minutes : minutes;
+                    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+                    return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+                }, sortByCompleteTime() {
+                    console.log(this.racerdata)
+                    this.racerdata.data.sort((a, b) => {
+                        if (!a.completionTime) return 1
+                        if (!b.completionTime) return -1
+                        if (a.completionTime.seconds - 0 < b.completionTime.seconds - 0)
+                            return 1;
+                        if (a.completionTime.seconds - 0 > b.completionTime.seconds - 0)
+                            return -1;
+                        return 0;
+                    })
+                },
+                togglefiltermenu() {
+                    this.menuopen = !this.menuopen
+                },
+                filtertable(filtertype) {
+                    console.log(filtertype)
+                    if (filtertype == 'all') {
+                        this.racerdata.data = this.racerdata.data.map(x => {
+                            return {
+                                ...x, hidden: false
+                            }
+                        })
+                    } else
+                        if (filtertype == 'topm') {
+                            this.racerdata.data = this.racerdata.data.map(x => {
+                                if (x.gender == 'male')
+                                    return {
+                                        ...x, hidden: false
+                                    }
+                                else
+                                    return {
+                                        ...x, hidden: true
+                                    }
+                            })
+                        } else if (filtertype == 'topf') {
+                            this.racerdata.data = this.racerdata.data.map(x => {
+                                if (x.gender == 'female')
+                                    return {
+                                        ...x, hidden: false
+                                    }
+                                else
+                                    return {
+                                        ...x, hidden: true
+                                    }
+                            })
+                        }
+                    this.racerdata.data.sort((a, b) => {
+                        if (a.ranking - 0 < b.ranking - 0)
+                            return -1;
+                        if (a.ranking - 0 > b.ranking - 0)
+                            return 1;
+                        return 0;
+                    })
+                },
+                sorttableby(sorttype) {
+                    console.log(sorttype)
+                    if (sorttype == 'ranking') {
+                        this.racerdata.data.sort((a, b) => {
+                            if (a.ranking - 0 < b.ranking - 0)
+                                return -1;
+                            if (a.ranking - 0 > b.ranking - 0)
+                                return 1;
+                            return 0;
+                        })
+                    } else if (sorttype == 'bib') {
+                        this.racerdata.data.sort((a, b) => {
+                            if (a.bibNumber < b.bibNumber)
+                                return -1;
+                            if (a.bibNumber > b.bibNumber)
+                                return 1;
+                            return 0;
+                        })
+                    } else if (sorttype == 'name') {
+                        this.racerdata.data.sort((a, b) => {
+                            if (a.nickname < b.nickname)
+                                return -1;
+                            if (a.nickname > b.nickname)
+                                return 1;
+                            return 0;
+                        })
+                    } else if (sorttype == 'status') {
+                        this.racerdata.data.sort((a, b) => {
+                            if (a.racerStatus < b.racerStatus)
+                                return -1;
+                            if (a.racerStatus > b.racerStatus)
+                                return 1;
+                            return 0;
+                        })
+                    } else if (sorttype == 'gender') {
+                        this.racerdata.data.sort((a, b) => {
+                            if (a.gender < b.gender)
+                                return -1;
+                            if (a.gender > b.gender)
+                                return 1;
+                            return 0;
+                        })
+                    }
+                },
+                sortByRanking() {
+                    this.racerdata.data.sort((a, b) => {
+                        if (a.ranking - 0 < b.ranking - 0)
+                            return -1;
+                        if (a.ranking - 0 > b.ranking - 0)
+                            return 1;
+                        return 0;
+                    })
+                }, toggleTableMode() {
+                    if (this.tableMode == 'realtime') {
+                        console.log('sort by completion')
+                        this.sortByRanking()
+                        this.modeButton = "Switch to Real Time Mode"
+                        this.tableMode = 'finish'
+                    } else if (this.tableMode == 'finish') {
+                        console.log('sort by finish')
+                        this.sortByCompleteTime()
+                        this.modeButton = "Switch to Finish Mode"
+                        this.tableMode = 'realtime'
+                    }
+                }, dateTimeToString(datetime) {
+                    datetime = datetime * 1000
+                    function pad(v) {
+                        return (v < 10) ? '0' + v : v
+                    }
+                    function getDateString(datetime) {
+                        const d = new Date(datetime)
+                        var year = d.getFullYear();
+                        var month = pad(d.getMonth() + 1);
+                        var day = pad(d.getDate());
+                        var hour = pad(d.getHours());
+                        var min = pad(d.getMinutes());
+                        var sec = pad(d.getSeconds());
+                        // return year + month + day + hour + min + sec;
+                        return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
+                        //YYYYMMDDhhmmss
+                    }
+                    return getDateString(datetime)
+                }, searchuser(event) {
+                    console.log('search user')
+                    this.racerdata.data.sort((a, b) => {
+                        const bibsim = this.similarity(this.searchinput, b.bibNumber) - this.similarity(this.searchinput, a.bibNumber)
+                        const namesim = this.similarity(this.searchinput, b.nickname) - this.similarity(this.searchinput, a.nickname)
+                        return namesim ? namesim : bibsim
+                    })
+
+                }, similarity(s1, s2) {
+                    var longer = s1;
+                    var shorter = s2;
+                    if (s1.length < s2.length) {
+                        longer = s2;
+                        shorter = s1;
+                    }
+                    var longerLength = longer.length;
+                    if (longerLength == 0) {
+                        return 1.0;
+                    }
+                    return (longerLength - this.editDistance(longer, shorter)) / parseFloat(longerLength);
+                }, editDistance(s1, s2) {
+                    s1 = s1.toLowerCase();
+                    s2 = s2.toLowerCase();
+
+                    var costs = new Array();
+                    for (var i = 0; i <= s1.length; i++) {
+                        var lastValue = i;
+                        for (var j = 0; j <= s2.length; j++) {
+                            if (i == 0)
+                                costs[j] = j;
+                            else {
+                                if (j > 0) {
+                                    var newValue = costs[j - 1];
+                                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                        newValue = Math.min(Math.min(newValue, lastValue),
+                                            costs[j]) + 1;
+                                    costs[j - 1] = lastValue;
+                                    lastValue = newValue;
+                                }
+                            }
+                        }
+                        if (i > 0)
+                            costs[s2.length] = lastValue;
+                    }
+                    return costs[s2.length];
+                }, updatemap() {
+                    setTimeout(() => {
+                        console.log('updatemap')
+                        const nowdata = this.livemapdata
+
+                        let coordinates = []
+                        let userCoor = {}
+                        for (j in nowdata) {
+                            const userId = j
+                            if (userCoor[userId]) {
+                                if (nowdata[j].checkInTime >= userCoor[userId].checkInTime)
+                                    userCoor[userId] = nowdata[j]
+                            } else {
+                                userCoor[userId] = nowdata[j]
+                            }
+                        }
+                        // for (j in userCoor) {
+
+                        //     if (!!this.tracking[j] && (this.racerdatabyid[j].racerStatus == 'RACING' || this.racerdatabyid[j].racerStatus == 'START')) {
+                        //         console.log('tracking ', j)
+                        //         coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
+                        //     }
+
+                        // }
+
+                        console.log(userCoor[this.trackinguserid])
+                        if (userCoor[this.trackinguserid])
+                            if (userCoor[this.trackinguserid].location)
+                                if (userCoor[this.trackinguserid].location.longitude && userCoor[this.trackinguserid].location.latitude) {
+                                    coordinates.push([userCoor[this.trackinguserid].location.longitude, userCoor[this.trackinguserid].location.latitude])
+                                    map.flyTo({
+                                        center: [userCoor[this.trackinguserid].location.longitude, userCoor[this.trackinguserid].location.latitude],
+                                        speed: 1,
+                                        zoom: parseFloat(this.zoom) || 15.2,
+                                    });
+                                }
+
+
+                        // console.log(userCoor)
+                        console.log(coordinates)
+
+                        /* const coordinates = [...Object.entries(nowdata).filter(x => {
+                             if (!!this.tracking[x[0]]) {
+                                 console.log('tracking ', x[0])
+                                 console.log(x[1])
+                             }
+                             return !!this.tracking[x[0]]
+                             // return userIdDetails[x[0]].racerStatus == 'START' || userIdDetails[x[0]].racerStatus == 'PRESTART' || userIdDetails[x[0]].racerStatus == 'RACING'
+                         }).map(x => [x[1].location.longitude, x[1].location.latitude])]
+                         console.log(coordinates)*/
+
+
+                        map.getSource('point').setData({
+                            'type': 'FeatureCollection',
+                            'features': coordinates.map(x => {
+                                return {
+                                    'type': 'Feature',
+                                    'geometry': {
+                                        'type': 'Point',
+                                        'coordinates': x
+                                    }
+                                }
+                            })
+                        });
+                    }, 100);
+
+                }
+
+            },
+            watch: {
+                livemapdata: function (val) {
+                    console.log('livemapdata change')
+                    this.updatemap()
+                }, tracking: function (val) {
+                    console.log('tracking change')
+                    this.updatemap()
+                }
+            }
+        }).mount('#app')
+    </script>
+
+
+
+
+    <!--=======================Javascript============================-->
+    <!-- build:js assets/js/app.min.js -->
+    <!--=== Modernizr Min Js ===-->
+    <script src="assets/js/modernizr.min.js"></script>
+    <!--=== jQuery Min Js ===-->
+    <script src="assets/js/jquery.min.js"></script>
+    <!--=== jQuery Migration Min Js ===-->
+    <script src="assets/js/jquery-migrate.min.js"></script>
+    <!--=== Popper Min Js ===-->
+    <script src="assets/js/popper.min.js"></script>
+    <!--=== Bootstrap Min Js ===-->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!--=== Select2 Min Js ===-->
+    <script src="assets/js/select2.full.min.js"></script>
+    <!--=== Data Table Min Js ===-->
+    <script src="assets/js/datatables.min.js"></script>
+    <!--=== ChartJS Min Js ===-->
+    <script src="assets/js/chart.min.js"></script>
+    <!--=== jQuery Vector Map Min Js ===-->
+    <script src="assets/js/jquery.vmap.min.js"></script>
+    <!--=== jQuery Vector World Min Js ===-->
+    <script src="assets/js/jquery.vmap.world.js"></script>
+
+    <!--=== APP Js ===-->
+    <!-- <script src="assets/js/app.js"></script> -->
+    <!--=== Active Js ===-->
+    <!-- <script src="assets/js/active.js"></script> -->
+
+    <!-- endbuild -->
+</body>
+
+</html>

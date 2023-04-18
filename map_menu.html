@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trailme - Leaderboard</title>
+
+    <!--== Favicon ==-->
+    <!-- <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon" /> -->
+
+    <script src="confetti.js"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+
+
+    <!--== Google Fonts ==-->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,300;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- build:css assets/css/app.min.css -->
+    <!--== jqvmap Min CSS ==-->
+    <link href="assets/css/jqvmap.min.css" rel="stylesheet" />
+    <!--== ChartJS Min CSS ==-->
+    <link href="assets/css/chart.min.css" rel="stylesheet" />
+    <!--== DataTables Min CSS ==-->
+    <link href="assets/css/datatables.min.css" rel="stylesheet" />
+    <!--== Select2 Min CSS ==-->
+    <link href="assets/css/select2.min.css" rel="stylesheet" />
+    <!--== Bootstrap Min CSS ==-->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!--== Main Style CSS ==-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- endbuild -->
+
+
+
+    <style>
+        .bounce-enter-active {
+            animation: bounce-in 0.5s;
+        }
+
+        .bounce-leave-active {
+            animation: bounce-in 0.5s reverse;
+        }
+
+        @keyframes bounce-in {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.25);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+        .mapboxgl-marker {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid gray;
+            background-color: lightblue;
+        }
+    </style>
+    <style>
+        .form-search {
+            box-sizing: border-box;
+            height: 50px;
+            border: 0;
+            /* border-radius: 20px; */
+            width: 100%;
+            padding: 0 20px 0 20px;
+            background: none;
+            /* box-shadow: 0px 0px 30px 0px rgb(0 0 0 / 15%); */
+        }
+
+        .myclickable:hover {
+            cursor: pointer;
+            opacity: .5;
+        }
+    </style>
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+</head>
+
+<body style="background: linear-gradient(#008cd1,#2da04d); overflow: hidden;">
+    <div id="app">
+
+        <div v-if=" !trackinguserid" class="content-section-2" id="leaderboard"
+            style=" top: 0; left: 0; opacity: .9; height: 100vh; width: 100vw; z-index: 9999; overflow-y: scroll; overflow-wrap: normal; ">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-12 ">
+                        <div class="list-view table-responsive"
+                            style="border-radius: 20px; margin-bottom: 20px; overflow: hidden;" id="list-view">
+                            <div class="row">
+                                <div class="col-11"> <input @keyup="searchcourse($event)" @change="searchcourse($event)"
+                                        v-model="searchinput" placeholder="Enter Your Keywords" type="search"
+                                        class="form-search"></div>
+
+                                <div class="col-1"> <img
+                                        src="data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 133.33 136'%3E%3Cg id='surface1'%3E%3Cpath d='M94.11,80.7A51.13,51.13,0,1,0,78.38,95.19l37.71,37.48a10.7,10.7,0,1,0,15.52-14.74c-.13-.14-.25-.26-.39-.39ZM52.33,84.2a33,33,0,1,1,33-33.05,33,33,0,0,1-33,33.05Z' transform='translate(-1.22 0)' fill='%23008cd2'/%3E%3C/g%3E%3C/svg%3E"
+                                        style="width: 100%; padding: 12px; padding-right: 25px;">
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-12 ">
+                        <div class="list-view table-responsive" style="border-radius: 20px; margin-bottom: 100px;"
+                            id="list-view">
+                            <table class="list-view__table display table">
+                                <thead class="list-view__head">
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <!-- <th>Desciption</th> -->
+                                        <!-- <th>Go to Course</th> -->
+                                    </tr>
+                                </thead>
+
+                                <tbody class="list-view__body">
+                                    <Transition name="bounce">
+                                        <tr v-for="(course,ind) in  coursedata" :key="ind" @click="choosecourse(course)"
+                                            class="myclickable">
+                                            <template v-if="course">
+                                                <td style="text-align: center;"><img
+                                                        style="width: 120px; height: 120px; object-fit: cover; border-radius: 20px;"
+                                                        :src="course.coursePicture"></td>
+                                                <td>{{course.name}}</td>
+                                                <!-- <td style="overflow-wrap: normal;">
+                                                    <pre>{{course.description}}</pre>
+                                                </td> -->
+                                                <!-- <td><a @click="choosecourse(course)"><button
+                                                            style="width: 100%;">🏃🏾‍♂️</button></a>
+                                                </td> -->
+                                            </template>
+                                        </tr>
+
+                                    </Transition>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div v-if="trackinguserid"
+            style="position: fixed; bottom: 40px; left: 40px; opacity: .9; height: 100px; width: 100px; z-index: 9999;">
+            <a @click="cleartrackinguser()">
+                <button>
+                    <img src="https://static.thenounproject.com/png/1410611-200.png">
+                </button>
+            </a>
+        </div>
+
+        <!-- <div id='mapboxframe' style='width: 100vw; height: 100vh;'></div> -->
+    </div>
+
+
+    <script>
+        var map
+        const {createApp} = Vue
+
+        const VueApp = createApp({
+            async mounted() {
+
+            },
+            data() {
+                return {
+                    coursedata: [],
+                    searchinput: ""
+                }
+            }, computed: {
+
+            },
+            methods: {
+                msToTime: function (duration) {
+                    duration = duration * 1000
+                    var milliseconds = Math.floor((duration % 1000) / 100),
+                        seconds = Math.floor((duration / 1000) % 60),
+                        minutes = Math.floor((duration / (1000 * 60)) % 60),
+                        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+                    hours = (hours < 10) ? "0" + hours : hours;
+                    minutes = (minutes < 10) ? "0" + minutes : minutes;
+                    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+                    return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+                }, dateTimeToString(datetime) {
+                    datetime = datetime * 1000
+                    function pad(v) {
+                        return (v < 10) ? '0' + v : v
+                    }
+                    function getDateString(datetime) {
+                        const d = new Date(datetime)
+                        var year = d.getFullYear();
+                        var month = pad(d.getMonth() + 1);
+                        var day = pad(d.getDate());
+                        var hour = pad(d.getHours());
+                        var min = pad(d.getMinutes());
+                        var sec = pad(d.getSeconds());
+                        // return year + month + day + hour + min + sec;
+                        return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
+                        //YYYYMMDDhhmmss
+                    }
+                    return getDateString(datetime)
+                }, choosecourse(course) {
+                    window.location.href = "map_embed.html?courseid=" + (course._id)
+                }, searchcourse(event) {
+                    console.log('search course')
+                    this.coursedata.sort((a, b) => {
+                        const namesim = this.similarity(this.searchinput, b.name) - this.similarity(this.searchinput, a.name)
+                        return namesim
+                    })
+
+                }, similarity(s1, s2) {
+                    var longer = s1;
+                    var shorter = s2;
+                    if (s1.length < s2.length) {
+                        longer = s2;
+                        shorter = s1;
+                    }
+                    var longerLength = longer.length;
+                    if (longerLength == 0) {
+                        return 1.0;
+                    }
+                    return (longerLength - this.editDistance(longer, shorter)) / parseFloat(longerLength);
+                }, editDistance(s1, s2) {
+                    s1 = s1.toLowerCase();
+                    s2 = s2.toLowerCase();
+
+                    var costs = new Array();
+                    for (var i = 0; i <= s1.length; i++) {
+                        var lastValue = i;
+                        for (var j = 0; j <= s2.length; j++) {
+                            if (i == 0)
+                                costs[j] = j;
+                            else {
+                                if (j > 0) {
+                                    var newValue = costs[j - 1];
+                                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                        newValue = Math.min(Math.min(newValue, lastValue),
+                                            costs[j]) + 1;
+                                    costs[j - 1] = lastValue;
+                                    lastValue = newValue;
+                                }
+                            }
+                        }
+                        if (i > 0)
+                            costs[s2.length] = lastValue;
+                    }
+                    return costs[s2.length];
+                }
+            },
+
+        }).mount('#app')
+
+        const queryString = window.location.search
+        const urlParams = new URLSearchParams(queryString)
+        const eventId = urlParams.get('eventid')
+
+        async function getcoursesbyeventid() {
+            const url = 'https://1f53v2wgyk.execute-api.us-east-1.amazonaws.com/getcoursebyeventid/' + eventId
+            const coursedata = await new Promise((resolve, reject) => {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Typical action to be performed when the document is ready:
+                        resolve(JSON.parse(xhttp.responseText))
+                    }
+                };
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            })
+            console.log(coursedata)
+            VueApp.$data.coursedata = coursedata.data
+        }
+
+        getcoursesbyeventid()
+    </script>
+
+
+
+
+    <!--=======================Javascript============================-->
+    <!-- build:js assets/js/app.min.js -->
+    <!--=== Modernizr Min Js ===-->
+    <script src="assets/js/modernizr.min.js"></script>
+    <!--=== jQuery Min Js ===-->
+    <script src="assets/js/jquery.min.js"></script>
+    <!--=== jQuery Migration Min Js ===-->
+    <script src="assets/js/jquery-migrate.min.js"></script>
+    <!--=== Popper Min Js ===-->
+    <script src="assets/js/popper.min.js"></script>
+    <!--=== Bootstrap Min Js ===-->
+    <script src="assets/js/bootstrap.min.js"></script>
+    <!--=== Select2 Min Js ===-->
+    <script src="assets/js/select2.full.min.js"></script>
+    <!--=== Data Table Min Js ===-->
+    <script src="assets/js/datatables.min.js"></script>
+    <!--=== ChartJS Min Js ===-->
+    <script src="assets/js/chart.min.js"></script>
+    <!--=== jQuery Vector Map Min Js ===-->
+    <script src="assets/js/jquery.vmap.min.js"></script>
+    <!--=== jQuery Vector World Min Js ===-->
+    <script src="assets/js/jquery.vmap.world.js"></script>
+
+    <!--=== APP Js ===-->
+    <!-- <script src="assets/js/app.js"></script> -->
+    <!--=== Active Js ===-->
+    <!-- <script src="assets/js/active.js"></script> -->
+
+    <!-- endbuild -->
+</body>
+
+</html>
