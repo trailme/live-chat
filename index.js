@@ -17,6 +17,7 @@ io.on('connection', (socket) => {
   console.log('a user connected')
   connectCounter++
   io.emit('connectCounter', connectCounter)
+  io.emit('chat message', { from: 'system', msg: 'Welcome new friend!' })
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg)
     io.emit('chat message', msg)

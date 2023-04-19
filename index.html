@@ -205,56 +205,56 @@
             map.on('load', () => {
 
 
-                map.loadImage(
-                    'https://i.ibb.co/CB8YgPQ/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb59e6a0-357249031518813179368.png',
-                    // 'https://banner2.cleanpng.com/20180216/uke/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb338d26.8318981415188131792112.jpg',
-                    (error, image) => {
-                        if (error) throw error;
+                // map.loadImage(
+                //     'https://i.ibb.co/CB8YgPQ/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb59e6a0-357249031518813179368.png',
+                //     // 'https://banner2.cleanpng.com/20180216/uke/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb338d26.8318981415188131792112.jpg',
+                //     (error, image) => {
+                //         if (error) throw error;
 
-                        // Add the image to the map style.
-                        map.addImage('cat', image);
+                //         // Add the image to the map style.
+                //         map.addImage('cat', image);
 
-                        // Add a data source containing one point feature.
-                        map.addSource('point', {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'FeatureCollection',
-                                'features': [
-                                    {
-                                        'type': 'Feature',
-                                        'geometry': {
-                                            'type': 'Point',
-                                            'coordinates': [114.261706, 22.301909]
-                                        }
-                                    },
-                                    {
-                                        'type': 'Feature',
-                                        'geometry': {
-                                            'type': 'Point',
-                                            'coordinates': [114.261756, 22.301919]
-                                        }
-                                    }
-                                ]
-                            }
-                        });
+                //         // Add a data source containing one point feature.
+                //         map.addSource('point', {
+                //             'type': 'geojson',
+                //             'data': {
+                //                 'type': 'FeatureCollection',
+                //                 'features': [
+                //                     {
+                //                         'type': 'Feature',
+                //                         'geometry': {
+                //                             'type': 'Point',
+                //                             'coordinates': [114.261706, 22.301909]
+                //                         }
+                //                     },
+                //                     {
+                //                         'type': 'Feature',
+                //                         'geometry': {
+                //                             'type': 'Point',
+                //                             'coordinates': [114.261756, 22.301919]
+                //                         }
+                //                     }
+                //                 ]
+                //             }
+                //         });
 
-                        // Add a layer to use the image to represent the data.
-                        map.addLayer({
-                            'id': 'points',
-                            'type': 'symbol',
-                            'source': 'point', // reference the data source
-                            'layout': {
-                                'icon-image': 'cat', // reference the image
-                                'icon-size': 0.15
-                            }
-                        });
+                //         // Add a layer to use the image to represent the data.
+                //         map.addLayer({
+                //             'id': 'points',
+                //             'type': 'symbol',
+                //             'source': 'point', // reference the data source
+                //             'layout': {
+                //                 'icon-image': 'cat', // reference the image
+                //                 'icon-size': 0.15
+                //             }
+                //         });
 
-                        startlivetracking()
+                //         startlivetracking()
 
-                    }
-                );
+                //     }
+                // );
 
-
+                startlivetracking()
                 onSnapshot(
                     doc(db, "Beacons", courseid),
                     {includeMetadataChanges: true},
@@ -397,51 +397,83 @@
             {{connectCounter}}
         </div>
 
+        <div style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 20px; left: 80px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;"
+            @click="switchsidepanelmode('chat')">
+            <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
+            </div> -->
+            <img style="width: 15px;" src="https://cdn-icons-png.flaticon.com/512/1380/1380370.png">
+            Chat
+        </div>
+
+
+        <div style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 20px; left: 160px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;"
+            @click="switchsidepanelmode('tracking')">
+            <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
+        </div> -->
+            <img style="width: 15px;" src="https://cdn-icons-png.flaticon.com/512/109/109732.png">
+            Tracking
+        </div>
+
+
         <div id="menu" v-if="racerdata.data"
             style="position: fixed; top: 50%; width: 30vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
             <h2 v-if="racerdata.courseDetails" style="margin: 20px;">
                 {{racerdata.courseDetails.name}}</h2>
-            <template v-for="item in racerdata.data">
-                <div class="row" v-if="item.racerStatus=='START'||item.racerStatus=='RACING'"
-                    style="padding: 10px 20px; width: 95%;">
-                    <div class="col-5">{{item.nickname}}</div>
-                    <div class="col-5">{{item.racerStatus}}</div>
-                    <div class="col-2">
-                        <label class="container">
-                            <input type="checkbox" v-model="tracking[item.userId]">
-                            <span @click="updatemap()" class="checkmark"></span>
-                        </label>
+            <template v-if="sidepanelmode=='tracking'">
+                <template v-for="item in racerdata.data"
+                    v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length>0">
+                    <div class="row" v-if="item.racerStatus=='START'||item.racerStatus=='RACING'"
+                        style="padding: 10px 20px; width: 95%;">
+                        <div class="col-5">{{item.nickname}}</div>
+                        <div class="col-5">{{item.racerStatus}}</div>
+                        <div class="col-2">
+                            <label class="container">
+                                <input type="checkbox" v-model="tracking[item.userId]">
+                                <span @click="updatemap()" class="checkmark"></span>
+                            </label>
+
+                        </div>
 
                     </div>
+                </template>
 
-                </div>
+                <template v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0">
+                    <div style="margin-left: 20px; font-size: 20px; opacity: .9;">No racer is running right now. <div>
+                            STAY TUNED!</div>
+                    </div>
+
+                    <img style=" opacity: .4;"
+                        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e1cb4492-b2e6-4528-8634-7bc636ec03f1/d8kril2-41567055-e874-4fd5-a948-433ced1425e2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2UxY2I0NDkyLWIyZTYtNDUyOC04NjM0LTdiYzYzNmVjMDNmMVwvZDhrcmlsMi00MTU2NzA1NS1lODc0LTRmZDUtYTk0OC00MzNjZWQxNDI1ZTIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.wiCpkJLnmkAp_G5rQc8tL7UFdQZoR9VTY0lE9unwrSY">
+                </template>
+
             </template>
 
+            <template v-if="sidepanelmode=='chat'">
 
-            <div id="messagearea" style="height: calc(100% - 150px); overflow: scroll; overflow-x: hidden;
+                <div id="messagearea" style="height: calc(100% - 150px); overflow: scroll; overflow-x: hidden;
              padding-left: 10px; padding-right: 10px; width: calc(100% + 18px);">
 
-                <template v-for="item in chatlist">
-                    <div v-if="item.from!=socketid"
-                        style="color: black; background: rgba(255, 255, 255, 0.761); margin-bottom: 10px; border-radius: 5px; font-size: 13px; padding: 5px; width: 250px;">
-                        {{generateName(item.from)}}: {{item.msg}}</div>
-                    <div v-if="item.from==socketid"
-                        style="color: black; background: rgba(255, 255, 255, 0.761); margin-bottom: 10px; border-radius: 5px; font-size: 13px; padding: 5px; width: 250px; margin-left: auto;">
-                        me: {{item.msg}}</div>
-                </template>
-            </div>
+                    <template v-for="item in chatlist">
+                        <div v-if="item.from!=socketid"
+                            style="color: black; background: rgba(255, 255, 255, 0.761); margin-bottom: 10px; border-radius: 5px; font-size: 13px; padding: 5px; width: 250px;">
+                            {{generateName(item.from)}}: {{item.msg}}</div>
+                        <div v-if="item.from==socketid"
+                            style="color: black; background: rgba(255, 255, 255, 0.761); margin-bottom: 10px; border-radius: 5px; font-size: 13px; padding: 5px; width: 250px; margin-left: auto;">
+                            me: {{item.msg}}</div>
+                    </template>
+                </div>
 
 
-            <form @submit.prevent="addmessage"
-                style="text-align: center; position: absolute; width: 100%; bottom: 20px; font-size: 13px;">
-                <input
-                    style="background: none; background: rgba(255, 255, 255, 0.761);  border-radius: 7px; border: 2px solid; width: 80%; margin-right: 2%; padding: 3px 5px;"
-                    id="input" autocomplete="off" v-model="chatinput" /><button
-                    style="border-radius: 7px; border: 2px solid; padding: 3px 5px; background: rgba(255, 255, 255, 0.761); "><img
-                        src="https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/send-icon.png"
-                        style="width: 15px;"></button>
-            </form>
-
+                <form @submit.prevent="addmessage"
+                    style="text-align: center; position: absolute; width: 100%; bottom: 20px; font-size: 13px;">
+                    <input
+                        style="background: none; background: rgba(255, 255, 255, 0.761);  border-radius: 7px; border: 2px solid; width: 80%; margin-right: 2%; padding: 3px 5px;"
+                        id="input" autocomplete="off" v-model="chatinput" /><button
+                        style="border-radius: 7px; border: 2px solid; padding: 3px 5px; background: rgba(255, 255, 255, 0.761); "><img
+                            src="https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/send-icon.png"
+                            style="width: 15px;"></button>
+                </form>
+            </template>
         </div>
         <div id='mapboxframe' style='width: 100vw; height: 100vh;'></div>
     </div>
@@ -467,10 +499,15 @@
                     socketid: '',
                     chatlist: [],
                     nameList: {},
-                    connectCounter: 0
+                    connectCounter: 0,
+                    sidepanelmode: 'tracking',
+                    markershowing: []
                 }
             },
             methods: {
+                switchsidepanelmode(mode) {
+                    this.sidepanelmode = mode
+                },
                 addmessage(msg, from) {
                     if (msg && from) {
                         this.chatlist.push(msg)
@@ -570,9 +607,10 @@
                             if (!!this.tracking[j]) {
                                 console.log('tracking ', j)
                                 coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
+                                propic.push('https://ui-avatars.com/api/?name=' + userinfo[j].nickname.split(' ').join('+'))
                             }
-                            coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
-                            propic.push('https://ui-avatars.com/api/?name=' + userinfo[j].nickname.split(' ').join('+'))
+                            // coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
+                            // propic.push('https://ui-avatars.com/api/?name=' + userinfo[j].nickname.split(' ').join('+'))
                             // propic.push('https://ui-avatars.com/api/?name=John+Doe')
 
                         }
@@ -592,42 +630,48 @@
                          console.log(coordinates)*/
 
 
-                        map.getSource('point').setData({
-                            'type': 'FeatureCollection',
-                            'features': coordinates.map(x => {
-                                return {
-                                    'type': 'Feature',
-                                    'geometry': {
-                                        'type': 'Point',
-                                        'coordinates': x
-                                    }
-                                }
-                            })
-                        });
+                        // map.getSource('point').setData({
+                        //     'type': 'FeatureCollection',
+                        //     'features': coordinates.map(x => {
+                        //         return {
+                        //             'type': 'Feature',
+                        //             'geometry': {
+                        //                 'type': 'Point',
+                        //                 'coordinates': x
+                        //             }
+                        //         }
+                        //     })
+                        // });
 
+
+                        for (let j = 0; j < this.markershowing.length; j++) {
+                            this.markershowing[j].remove()
+                        }
 
                         for (let j = 0; j < coordinates.length; j++) {
                             const marker = coordinates[j]
                             // Create a DOM element for each marker.
                             const el = document.createElement('div');
-                            const width = 50;
-                            const height = 50;
+                            const width = 30;
+                            const height = 30;
                             el.className = 'marker';
                             el.style.backgroundImage = `url(${propic[j]})`;//`url(https://placekitten.com/g/${width}/${height}/)`;
                             el.style.width = `${width}px`;
                             el.style.height = `${height}px`;
                             el.style.backgroundSize = '100%';
+                            el.style.opacity = '0.9';
+                            el.style.border = '2px solid #2da04d'
 
                             el.addEventListener('click', () => {
                                 window.alert(marker);
                             });
 
                             // Add markers to the map.
-                            new mapboxgl.Marker(el)
+                            this.markershowing[j] = new mapboxgl.Marker(el)
                                 .setLngLat(marker)
                                 .addTo(map);
-                            console.log('elements ')
-                            console.log(el)
+                            // console.log('elements ')
+                            // console.log(el)
                             console.log(propic[j])
                         }
 
@@ -638,6 +682,7 @@
                     }, 100);
 
                 }, generateName(id) {
+                    if (id == 'system') return 'Trailme'
                     console.log(this.nameList)
                     console.log(this.nameList[id])
                     if (this.nameList[id])
@@ -667,7 +712,8 @@
             console.log(msg)
             // window.scrollTo(0, document.body.scrollHeight);
             VueApp.addmessage(msg, 'other')
-            document.getElementById("messagearea").scrollTo(0, document.getElementById("messagearea").scrollHeight);
+            if (document.getElementById("messagearea"))
+                document.getElementById("messagearea").scrollTo(0, document.getElementById("messagearea").scrollHeight);
         });
 
         socket.on('connectCounter', function (connectCounter) {
