@@ -510,14 +510,15 @@
 
 
         <div v-if="nowuserprofile.profilePicture"
-            style="background: rgba(255, 255, 255, 0.861); position: fixed; bottom: 10vh; left: 20px; border-radius: 20px; z-index:999; padding: 5px 10px; opacity: .85; width: 65vw; padding: 20px; backdrop-filter: blur(5px);">
+            style="background: rgba(255, 255, 255, 0.861); position: fixed; bottom: 5vh; left: 20px; border-radius: 20px; z-index:999; padding: 5px 10px; opacity: .85; width: 65vw; padding: 20px; backdrop-filter: blur(5px); max-height: 30vh; overflow: hidden; min-height: 270px;">
 
             <div style="position: absolute; right: 10px; top: 10px;" @click="closedetail()">x</div>
 
 
             <div class="row">
 
-                <div class="col-4"> <img style="width: 100%; border-radius: 20px;" :src="nowuserprofile.profilePicture">
+                <div class="col-4"> <img style="max-height: 25vh; width: 100%; border-radius: 20px; object-fit: contain;
+                    background: white;" :src="nowuserprofile.profilePicture">
                 </div>
                 <div class="col-8">
                     <h3>Racer Details <span
@@ -556,7 +557,7 @@
 
                     <div class="row">
                         <div class="col-4"> Ranking: </div>
-                        <div class="col-8"> {{nowuserprofile.ranking}}</div>
+                        <div class="col-8"> {{nowuserprofile.ranking?nowuserprofile.ranking:'/'}}</div>
                     </div>
 
                     <div class="row">
@@ -565,7 +566,7 @@
                     </div>
 
 
-                    <div style="width: 100%; text-align: right;"
+                    <div style=" position: absolute; right: 10px; bottom: 10px;"
                         v-if="crowd[nowuserprofile.locationid]&&crowd[nowuserprofile.locationid].length>1"><img
                             style="width:30px" src="https://cdn-icons-png.flaticon.com/512/109/109681.png"
                             @click="nextcrowduser()"></div>
@@ -708,10 +709,11 @@
             methods: {
                 async nextcrowduser() {
                     const userinfo = this.racerdatabyid()
+                    const userCoor = this.getUserCoor()
                     this.crowdpageindex = (this.crowdpageindex + 1) % (this.crowd[this.nowlocationid].length)
                     const crowduserid = this.crowd[this.nowlocationid][this.crowdpageindex]
                     this.nowuserprofile = await this.getUserProfile(crowduserid)
-                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], locationid: this.nowlocationid}
+                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: this.nowlocationid}
                 },
                 padTo2Digits(num) {
                     return num.toString().padStart(2, '0');
@@ -907,7 +909,23 @@
                         //YYYYMMDDhhmmss
                     }
                     return getDateString(datetime)
-                }, updatemap() {
+
+                }, getUserCoor() {
+                    let userCoor = {}
+                    const nowdata = this.livemapdata
+                    for (j in nowdata) {
+                        const userId = j
+
+                        if (userCoor[userId]) {
+                            if (nowdata[j].checkInTime >= userCoor[userId].checkInTime)
+                                userCoor[userId] = nowdata[j]
+                        } else {
+                            userCoor[userId] = nowdata[j]
+                        }
+                    }
+                    return userCoor
+                },
+                updatemap() {
                     setTimeout(() => {
                         console.log('updatemap')
                         const nowdata = this.livemapdata
@@ -915,19 +933,9 @@
                         let coordinates = []
                         let propic = []
                         let userinfo = this.racerdatabyid()
-                        let userCoor = {}
+                        let userCoor = this.getUserCoor()
                         let userids = []
                         this.crowd = {}
-                        for (j in nowdata) {
-                            const userId = j
-
-                            if (userCoor[userId]) {
-                                if (nowdata[j].checkInTime >= userCoor[userId].checkInTime)
-                                    userCoor[userId] = nowdata[j]
-                            } else {
-                                userCoor[userId] = nowdata[j]
-                            }
-                        }
 
                         for (j in userCoor) {
                             if (!!this.tracking[j]) {
@@ -938,11 +946,6 @@
                                 }
                             }
                         }
-
-
-
-
-
 
                         for (j in userCoor) {
 
