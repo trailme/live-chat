@@ -146,6 +146,75 @@
         }
     </style>
 
+    <style>
+        .form-search {
+            box-sizing: border-box;
+            height: 50px;
+            border: 0;
+            /* border-radius: 20px; */
+            width: 100%;
+            padding: 0 20px 0 20px;
+            background: none;
+            background: rgba(238, 238, 238, 0.805);
+
+            /* box-shadow: 0px 0px 30px 0px rgb(0 0 0 / 15%); */
+        }
+
+        .sorticon {
+            width: 17px;
+            margin-left: 5px;
+            opacity: .4;
+        }
+
+        .sorticon:hover {
+            cursor: pointer;
+        }
+
+        .filterbutton {
+            width: 100%;
+            padding: 12px;
+            padding-right: 25px;
+            padding-top: 16px;
+        }
+
+        .filterbutton:hover {
+            cursor: pointer;
+        }
+
+        .filtertag {
+            display: inline-block;
+            border: 2px solid #008cd1;
+            border-radius: 20px;
+            color: #008cd1;
+            padding: 5px 15px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filtertag:hover {
+            display: inline-block;
+            border: 2px solid #2da04d;
+            border-radius: 20px;
+            color: #2da04d;
+        }
+
+        .clickbefore {
+            background: rgba(255, 255, 255, 0.861);
+            opacity: .85;
+        }
+
+
+        .clickafter {
+            background: rgba(255, 255, 255, 0.961);
+            opacity: .95;
+        }
+
+        .clickafter:hover,
+        .clickbefore:hover {
+            cursor: pointer;
+        }
+    </style>
+
     <!--[if lt IE 9]>
     <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -157,7 +226,7 @@
 
         import {getAnalytics} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 
-        import {doc, onSnapshot, getFirestore} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import {doc, getDoc, onSnapshot, getFirestore} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 
 
@@ -183,6 +252,26 @@
 
         const db = getFirestore(app);
 
+
+        async function getUserProfile(userId) {
+            const docRef = doc(db, "Users", userId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const result = docSnap.data()
+                console.log("Document data:", result);
+                return result
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+                return {}
+            }
+
+        }
+
+        // getUserProfile('5dc0f414b3c5d040e5a26836')
+
+
         const queryString = window.location.search
         const urlParams = new URLSearchParams(queryString)
         const courseid = urlParams.get('courseid')
@@ -190,6 +279,9 @@
         console.log(courseid)
         let firstin = true
         // var map
+
+
+
 
         function initmap(mapboxUrl) {
 
@@ -204,7 +296,7 @@
 
             map.on('load', () => {
 
-
+                VueApp.getUserProfile = getUserProfile
                 // map.loadImage(
                 //     'https://i.ibb.co/CB8YgPQ/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb59e6a0-357249031518813179368.png',
                 //     // 'https://banner2.cleanpng.com/20180216/uke/kisspng-running-jogging-free-content-clip-art-run-away-cliparts-5a873ffb338d26.8318981415188131792112.jpg',
@@ -356,13 +448,12 @@
                 VueApp.sortByCompleteTime()
 
 
-                if (!map) initmap(nowdata.courseDetails.mapboxUrl)
-
-
-                if (!firstin) {
-
+                if (!map) {
+                    console.log('init map')
+                    initmap(nowdata.courseDetails.mapboxUrl)
                 } else {
-                    firstin = false
+                    console.log('update user details')
+                    VueApp.updatemap()
                 }
 
 
@@ -397,7 +488,8 @@
             {{connectCounter}}
         </div>
 
-        <div style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 20px; left: 80px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;"
+        <div :class="{clickafter: sidepanelmode=='chat', clickbefore: !(sidepanelmode=='chat')}"
+            style=" position: fixed; top: 20px; left: 80px; border-radius: 5px; z-index:999; padding: 5px 10px;"
             @click="switchsidepanelmode('chat')">
             <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
             </div> -->
@@ -406,7 +498,8 @@
         </div>
 
 
-        <div style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 20px; left: 160px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;"
+        <div :class="{clickafter: sidepanelmode=='tracking', clickbefore: !(sidepanelmode=='tracking')}"
+            style="position: fixed; top: 20px; left: 160px; border-radius: 5px; z-index:999; padding: 5px 10px;"
             @click="switchsidepanelmode('tracking')">
             <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
         </div> -->
@@ -415,28 +508,129 @@
         </div>
 
 
+
+        <div v-if="nowuserprofile.profilePicture"
+            style="background: rgba(255, 255, 255, 0.861); position: fixed; bottom: 10vh; left: 20px; border-radius: 20px; z-index:999; padding: 5px 10px; opacity: .85; width: 65vw; padding: 20px; backdrop-filter: blur(5px);">
+
+            <div style="position: absolute; right: 10px; top: 10px;" @click="closedetail()">x</div>
+
+
+            <div class="row">
+
+                <div class="col-4"> <img style="width: 100%; border-radius: 20px;" :src="nowuserprofile.profilePicture">
+                </div>
+                <div class="col-8">
+                    <h3>Racer Details <span
+                            v-if="crowd[nowuserprofile.locationid]&&crowd[nowuserprofile.locationid].length>1">({{crowdpageindex+1}}/{{crowd[nowuserprofile.locationid].length}})</span>
+                    </h3>
+                    <div class="row">
+                        <div class="col-4">Nickname: </div>
+                        <div class="col-8">{{nowuserprofile.nickname}}</div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-4">Experience: </div>
+                        <div class="col-8"> {{nowuserprofile.experienceLevel}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">Bib: </div>
+                        <div class="col-8">{{nowuserprofile.bibNumber}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">Nationality: </div>
+                        <div class="col-8"> {{nowuserprofile.nationality}} <img style="width: 30px;"
+                                :src="'https://flagsapi.com/'+nowuserprofile.nationality+'/flat/64.png'"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">Experience: </div>
+                        <div class="col-8"> {{nowuserprofile.experienceLevel}}</div>
+                    </div>
+
+
+
+
+                    <div class="row">
+                        <div class="col-4"> Ranking: </div>
+                        <div class="col-8"> {{nowuserprofile.ranking}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"> Last Update: </div>
+                        <div class="col-8"> {{formatDate(nowuserprofile.checkInTime)}}</div>
+                    </div>
+
+
+                    <div style="width: 100%; text-align: right;"
+                        v-if="crowd[nowuserprofile.locationid]&&crowd[nowuserprofile.locationid].length>1"><img
+                            style="width:30px" src="https://cdn-icons-png.flaticon.com/512/109/109681.png"
+                            @click="nextcrowduser()"></div>
+                    <!-- {{nowuserprofile}} -->
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
         <div id="menu" v-if="racerdata.data"
             style="position: fixed; top: 50%; width: 30vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
             <h2 v-if="racerdata.courseDetails" style="margin: 20px;">
                 {{racerdata.courseDetails.name}}</h2>
             <template v-if="sidepanelmode=='tracking'">
-                <template v-for="item in racerdata.data"
-                    v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length>0">
-                    <div class="row" v-if="item.racerStatus=='START'||item.racerStatus=='RACING'"
-                        style="padding: 10px 20px; width: 95%;">
-                        <div class="col-5">{{item.nickname}}</div>
-                        <div class="col-5">{{item.racerStatus}}</div>
-                        <div class="col-2">
-                            <label class="container">
-                                <input type="checkbox" v-model="tracking[item.userId]">
-                                <span @click="updatemap()" class="checkmark"></span>
-                            </label>
-
+                <template v-if="!(racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0)">
+                    <div class="row">
+                        <div class="col-13"> <input @keyup="searchuser($event)" @change="searchuser($event)"
+                                v-model="searchinput" placeholder="Enter Your Keywords" type="search"
+                                class="form-search">
                         </div>
+                        <!-- <div class="col-1"> <img
+                            src="data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 133.33 136'%3E%3Cg id='surface1'%3E%3Cpath d='M94.11,80.7A51.13,51.13,0,1,0,78.38,95.19l37.71,37.48a10.7,10.7,0,1,0,15.52-14.74c-.13-.14-.25-.26-.39-.39ZM52.33,84.2a33,33,0,1,1,33-33.05,33,33,0,0,1-33,33.05Z' transform='translate(-1.22 0)' fill='%23008cd2'/%3E%3C/g%3E%3C/svg%3E"
+                            style="width: 100%; padding: 12px; padding-right: 25px;">
+                    </div> -->
+                        <!-- <div class="col-1"> <img src="https://cdn-icons-png.flaticon.com/512/6590/6590958.png"
+                                class="filterbutton" @click="togglefiltermenu">
+                        </div> -->
+
+
+                        <div class="col-12" v-if="menuopen">
+                            <div class="filtertag" @click="filtertable('all')">All</div>
+                            <div class="filtertag" @click="filtertable('topf')">Top Females</div>
+                            <div class="filtertag" @click="filtertable('topm')">Top Males</div>
+                        </div>
+                    </div>
+
+
+                    <div class="row" style="padding: 10px 20px; width: 95%;">
+                        <div class="col-5">Name</div>
+                        <div class="col-5">Bib</div>
+                        <div class="col-2">Show </div>
 
                     </div>
-                </template>
+                    <template v-for="item in racerdata.data"
+                        v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length>0">
+                        <div class="row" v-if="item.racerStatus=='START'||item.racerStatus=='RACING'"
+                            style="padding: 10px 20px; width: 95%; font-size: 13px;">
+                            <div class="col-5">{{item.nickname}}</div>
+                            <!-- <div class="col-5">{{item.racerStatus}}</div> -->
+                            <div class="col-5">{{item.bibNumber}}</div>
+                            <div class="col-2">
+                                <label class="container">
+                                    <input type="checkbox" v-model="tracking[item.userId]">
+                                    <span @click="updatemap()" class="checkmark"></span>
+                                </label>
 
+                            </div>
+
+                        </div>
+                    </template>
+                </template>
                 <template v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0">
                     <div style="margin-left: 20px; font-size: 20px; opacity: .9;">No racer is running right now. <div>
                             STAY TUNED!</div>
@@ -501,12 +695,135 @@
                     nameList: {},
                     connectCounter: 0,
                     sidepanelmode: 'tracking',
-                    markershowing: []
+                    markershowing: [],
+                    db: null,
+                    nowuserprofile: {},
+                    crowd: {},
+                    searchinput: "",
+                    menuopen: false,
+                    crowdpageindex: 0,
+                    nowlocationid: ''
                 }
             },
             methods: {
+                async nextcrowduser() {
+                    const userinfo = this.racerdatabyid()
+                    this.crowdpageindex = (this.crowdpageindex + 1) % (this.crowd[this.nowlocationid].length)
+                    const crowduserid = this.crowd[this.nowlocationid][this.crowdpageindex]
+                    this.nowuserprofile = await this.getUserProfile(crowduserid)
+                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], locationid: this.nowlocationid}
+                },
+                padTo2Digits(num) {
+                    return num.toString().padStart(2, '0');
+                },
+                formatDate(date) {
+                    date = new Date(date)
+                    return (
+                        [
+                            date.getFullYear(),
+                            this.padTo2Digits(date.getMonth() + 1),
+                            this.padTo2Digits(date.getDate()),
+                        ].join('-') +
+                        ' ' +
+                        [
+                            this.padTo2Digits(date.getHours()),
+                            this.padTo2Digits(date.getMinutes()),
+                            this.padTo2Digits(date.getSeconds()),
+                        ].join(':')
+                    );
+                },
+                searchuser(event) {
+                    console.log('search user')
+                    this.racerdata.data.sort((a, b) => {
+                        const bibsim = this.similarity(this.searchinput, b.bibNumber) - this.similarity(this.searchinput, a.bibNumber)
+                        const namesim = this.similarity(this.searchinput, b.nickname) - this.similarity(this.searchinput, a.nickname)
+                        return namesim ? namesim : bibsim
+                    })
+
+                },
+                similarity(s1, s2) {
+                    var longer = s1;
+                    var shorter = s2;
+                    if (s1.length < s2.length) {
+                        longer = s2;
+                        shorter = s1;
+                    }
+                    var longerLength = longer.length;
+                    if (longerLength == 0) {
+                        return 1.0;
+                    }
+                    return (longerLength - this.editDistance(longer, shorter)) / parseFloat(longerLength);
+                }, editDistance(s1, s2) {
+                    s1 = s1.toLowerCase();
+                    s2 = s2.toLowerCase();
+
+                    var costs = new Array();
+                    for (var i = 0; i <= s1.length; i++) {
+                        var lastValue = i;
+                        for (var j = 0; j <= s2.length; j++) {
+                            if (i == 0)
+                                costs[j] = j;
+                            else {
+                                if (j > 0) {
+                                    var newValue = costs[j - 1];
+                                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                        newValue = Math.min(Math.min(newValue, lastValue),
+                                            costs[j]) + 1;
+                                    costs[j - 1] = lastValue;
+                                    lastValue = newValue;
+                                }
+                            }
+                        }
+                        if (i > 0)
+                            costs[s2.length] = lastValue;
+                    }
+                    return costs[s2.length];
+                },
+                filtertable(filtertype) {
+                    console.log(filtertype)
+                    if (filtertype == 'all') {
+                        this.racerdata.data = this.racerdata.data.map(x => {
+                            return {
+                                ...x, hidden: false
+                            }
+                        })
+                    } else
+                        if (filtertype == 'topm') {
+                            this.racerdata.data = this.racerdata.data.map(x => {
+                                if (x.gender == 'male')
+                                    return {
+                                        ...x, hidden: false
+                                    }
+                                else
+                                    return {
+                                        ...x, hidden: true
+                                    }
+                            })
+                        } else if (filtertype == 'topf') {
+                            this.racerdata.data = this.racerdata.data.map(x => {
+                                if (x.gender == 'female')
+                                    return {
+                                        ...x, hidden: false
+                                    }
+                                else
+                                    return {
+                                        ...x, hidden: true
+                                    }
+                            })
+                        }
+                    this.racerdata.data.sort((a, b) => {
+                        if (a.ranking - 0 < b.ranking - 0)
+                            return -1;
+                        if (a.ranking - 0 > b.ranking - 0)
+                            return 1;
+                        return 0;
+                    })
+                },
                 switchsidepanelmode(mode) {
                     this.sidepanelmode = mode
+                },
+                closedetail() {
+                    this.nowuserprofile = {}
                 },
                 addmessage(msg, from) {
                     if (msg && from) {
@@ -519,7 +836,13 @@
                 racerdatabyid() {
                     let temp = {}
                     this.racerdata.data.map(x => {
-                        temp[x.userId] = x
+                        if (!temp[x.userId])
+                            temp[x.userId] = x
+                        else if (x.createdAt.seconds > temp[x.userId].createdAt.seconds)
+                            temp[x.userId] = x
+                        else if (x.createdAt.seconds == temp[x.userId].createdAt.seconds)
+                            if (x.createdAt.nanoseconds > temp[x.userId].createdAt.nanoseconds)
+                                temp[x.userId] = x
                     })
                     return temp
                 },
@@ -593,8 +916,11 @@
                         let propic = []
                         let userinfo = this.racerdatabyid()
                         let userCoor = {}
+                        let userids = []
+                        this.crowd = {}
                         for (j in nowdata) {
                             const userId = j
+
                             if (userCoor[userId]) {
                                 if (nowdata[j].checkInTime >= userCoor[userId].checkInTime)
                                     userCoor[userId] = nowdata[j]
@@ -602,13 +928,49 @@
                                 userCoor[userId] = nowdata[j]
                             }
                         }
+
+                        for (j in userCoor) {
+                            if (!!this.tracking[j]) {
+                                if (userinfo[j].racerStatus == 'START' || userinfo[j].racerStatus == 'RACING') {
+                                    const locationid = userCoor[j].location.longitude + ',' + userCoor[j].location.latitude
+                                    if (!this.crowd[locationid]) this.crowd[locationid] = []
+                                    this.crowd[locationid].push(j)
+                                }
+                            }
+                        }
+
+
+
+
+
+
                         for (j in userCoor) {
 
+                            // if (userinfo[j].racerStatus == 'START' || userinfo[j].racerStatus == 'RACING')
                             if (!!this.tracking[j]) {
                                 console.log('tracking ', j)
-                                coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
-                                propic.push('https://ui-avatars.com/api/?name=' + userinfo[j].nickname.split(' ').join('+'))
+                                console.log(userinfo[j], userinfo[j].racerStatus == 'START' || userinfo[j].racerStatus == 'RACING')
+                                if (userinfo[j].racerStatus == 'START' || userinfo[j].racerStatus == 'RACING') {
+
+
+                                    const locationid = userCoor[j].location.longitude + ',' + userCoor[j].location.latitude
+
+
+
+                                    coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
+
+
+                                    if (this.crowd[locationid].length > 1)
+                                        propic.push('https://i.ibb.co/6XRWLwq/half-marathon-running-clip-art-marathon-afb5eccca8c7044156ba07f0a9ab12ea.png')
+                                    else
+                                        propic.push('https://ui-avatars.com/api/?background=fff&color=000&length=3&bold=true&name=' + userinfo[j].nickname.split(' ').join('+'))
+
+                                    userids.push(j)
+                                }
+
                             }
+
+
                             // coordinates.push([userCoor[j].location.longitude, userCoor[j].location.latitude])
                             // propic.push('https://ui-avatars.com/api/?name=' + userinfo[j].nickname.split(' ').join('+'))
                             // propic.push('https://ui-avatars.com/api/?name=John+Doe')
@@ -661,9 +1023,21 @@
                             el.style.backgroundSize = '100%';
                             el.style.opacity = '0.9';
                             el.style.border = '2px solid #2da04d'
+                            const tempuserid = userids[j]
+                            this.crowdpageindex = 0
+                            el.addEventListener('click', async () => {
+                                // alert(JSON.stringify(userinfo[tempuserid]));
+                                const locationid = marker.join(',')
+                                this.nowlocationid = locationid
+                                if (VueApp.$data.crowd[locationid].length == 1) {
+                                    VueApp.$data.nowuserprofile = await VueApp.getUserProfile(tempuserid)
+                                    VueApp.$data.nowuserprofile = {...VueApp.$data.nowuserprofile, ...userinfo[tempuserid], ...userCoor[tempuserid], locationid: locationid}
+                                } else {
+                                    const crowduserid = VueApp.$data.crowd[locationid][this.crowdpageindex]
+                                    VueApp.$data.nowuserprofile = await VueApp.getUserProfile(crowduserid)
+                                    VueApp.$data.nowuserprofile = {...VueApp.$data.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: locationid}
+                                }
 
-                            el.addEventListener('click', () => {
-                                window.alert(marker);
                             });
 
                             // Add markers to the map.
