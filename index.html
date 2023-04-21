@@ -16,6 +16,18 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
 
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
+    <script>
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: "0b042884-8c66-4491-8bed-52f5f1027d3c",
+            });
+        });
+    </script>
+
+
+
     <!--== Google Fonts ==-->
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,300;1,400&display=swap"
