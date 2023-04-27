@@ -226,6 +226,14 @@
         .clickbefore:hover {
             cursor: pointer;
         }
+
+
+        .dangerous {
+            border: 2px solid red;
+            border-radius: 10px;
+            background: #ff00008c;
+            margin-bottom: 10px;
+        }
     </style>
 
     <!--[if lt IE 9]>
@@ -523,7 +531,7 @@
 
 
         <div v-if="nowuserprofile.profilePicture"
-            style="background: rgba(255, 255, 255, 0.861); position: fixed; bottom: 5vh; left: 20px; border-radius: 20px; z-index:999; padding: 5px 10px; opacity: .85; width: 65vw; padding: 20px; backdrop-filter: blur(5px); max-height: 30vh; overflow: hidden; min-height: 300px;">
+            style="background: rgba(255, 255, 255, 0.861); position: fixed; bottom: 5vh; left: 20px; border-radius: 20px; z-index:999; padding: 5px 10px; opacity: .85; width: 65vw; padding: 20px; backdrop-filter: blur(5px); max-height: 30vh; overflow: hidden; min-height: 270px;">
 
             <div style="position: absolute; right: 10px; top: 10px;" @click="closedetail()">x</div>
 
@@ -578,13 +586,8 @@
                         <div class="col-8"> {{formatDate(nowuserprofile.checkInTime)}}</div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-4"> Cut Off Time: </div>
-                        <div class="col-8"> {{timeleft(nowuserprofile.cutOffTime.seconds*1000)}}</div>
-                    </div>
 
-
-                    <div style=" position: absolute; right: 10px; bottom: 10px;"
+                    <div style="position: absolute; right: 10px; bottom: 10px;"
                         v-if="crowd[nowuserprofile.locationid]&&crowd[nowuserprofile.locationid].length>1"><img
                             style="width:30px" src="https://cdn-icons-png.flaticon.com/512/109/109681.png"
                             @click="nextcrowduser()"></div>
@@ -599,65 +602,59 @@
 
 
         <div id="menu" v-if="racerdata.data"
-            style="position: fixed; top: 50%; width: 30vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
+            style="position: fixed; top: 50%; width: 80vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
             <h2 v-if="racerdata.courseDetails" style="margin: 20px;">
                 {{racerdata.courseDetails.name}}</h2>
             <template v-if="sidepanelmode=='tracking'">
-                <template v-if="!(racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0)">
-                    <div class="row">
-                        <div class="col-13"> <input @keyup="searchuser($event)" @change="searchuser($event)"
-                                v-model="searchinput" placeholder="Enter Your Keywords" type="search"
-                                class="form-search">
-                        </div>
-                        <!-- <div class="col-1"> <img
+                <div class="row">
+                    <div class="col-12"> <input @keyup="searchuser($event)" @change="searchuser($event)"
+                            v-model="searchinput" placeholder="Enter Your Keywords" type="search" class="form-search">
+                    </div>
+                    <!-- <div class="col-1"> <img
                             src="data:image/svg+xml,%3Csvg id='Layer_1' data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 133.33 136'%3E%3Cg id='surface1'%3E%3Cpath d='M94.11,80.7A51.13,51.13,0,1,0,78.38,95.19l37.71,37.48a10.7,10.7,0,1,0,15.52-14.74c-.13-.14-.25-.26-.39-.39ZM52.33,84.2a33,33,0,1,1,33-33.05,33,33,0,0,1-33,33.05Z' transform='translate(-1.22 0)' fill='%23008cd2'/%3E%3C/g%3E%3C/svg%3E"
                             style="width: 100%; padding: 12px; padding-right: 25px;">
                     </div> -->
-                        <!-- <div class="col-1"> <img src="https://cdn-icons-png.flaticon.com/512/6590/6590958.png"
+                    <!-- <div class="col-1"> <img src="https://cdn-icons-png.flaticon.com/512/6590/6590958.png"
                                 class="filterbutton" @click="togglefiltermenu">
                         </div> -->
 
 
-                        <div class="col-12" v-if="menuopen">
-                            <div class="filtertag" @click="filtertable('all')">All</div>
-                            <div class="filtertag" @click="filtertable('topf')">Top Females</div>
-                            <div class="filtertag" @click="filtertable('topm')">Top Males</div>
-                        </div>
+                    <div class="col-12" v-if="menuopen">
+                        <div class="filtertag" @click="filtertable('all')">All</div>
+                        <div class="filtertag" @click="filtertable('topf')">Top Females</div>
+                        <div class="filtertag" @click="filtertable('topm')">Top Males</div>
                     </div>
+                </div>
 
 
-                    <div class="row" style="padding: 10px 20px; width: 95%;">
-                        <div class="col-5">Name</div>
-                        <div class="col-5">Bib</div>
-                        <div class="col-2">Show </div>
 
-                    </div>
-                    <template v-for="item in racerdata.data"
-                        v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length>0">
-                        <div class="row" v-if="item.racerStatus=='START'||item.racerStatus=='RACING'"
+                <div class="row" style="padding: 10px 20px; width: 95%;">
+                    <div class="col-2">Name</div>
+                    <div class="col-2">Bib</div>
+                    <div class="col-6">Last Update</div>
+                    <!-- <div class="col-2">Lost Track</div> -->
+                    <div class="col-2">Status</div>
+                </div>
+
+                <template
+                    v-for="item in Object.keys(userinfo).map((key) => userinfo[key]).sort((a,b)=>b.createdAt.seconds-a.createdAt.seconds)">
+                    <template v-if="item.racerStatus!='FINISH'">
+                        <div :class="{row: true, dangerous: checkdangerous(item.createdAt.seconds*1000)}"
                             style="padding: 10px 20px; width: 95%; font-size: 13px;">
-                            <div class="col-5">{{item.nickname}}</div>
-                            <!-- <div class="col-5">{{item.racerStatus}}</div> -->
-                            <div class="col-5">{{item.bibNumber}}</div>
-                            <div class="col-2">
-                                <label class="container">
-                                    <input type="checkbox" v-model="tracking[item.userId]">
-                                    <span @click="updatemap()" class="checkmark"></span>
-                                </label>
+                            <!-- isDangerous[item.userId] -->
+                            <div class="col-2">{{item.nickname}}</div>
 
-                            </div>
+                            <div class="col-2">{{item.bibNumber}}</div>
 
+                            <!-- <div class="col-3">{{formatDate(item.createdAt.seconds*1000)}}</div> -->
+
+                            <div class="col-6">{{losttrack(item.createdAt.seconds*1000)}} Ago</div>
+
+                            <div class="col-2">{{item.racerStatus}}</div>
                         </div>
                     </template>
                 </template>
-                <template v-if="racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0">
-                    <div style="margin-left: 20px; font-size: 20px; opacity: .9;">No racer is running right now. <div>
-                            STAY TUNED!</div>
-                    </div>
 
-                    <img style=" opacity: .4;"
-                        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e1cb4492-b2e6-4528-8634-7bc636ec03f1/d8kril2-41567055-e874-4fd5-a948-433ced1425e2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2UxY2I0NDkyLWIyZTYtNDUyOC04NjM0LTdiYzYzNmVjMDNmMVwvZDhrcmlsMi00MTU2NzA1NS1lODc0LTRmZDUtYTk0OC00MzNjZWQxNDI1ZTIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.wiCpkJLnmkAp_G5rQc8tL7UFdQZoR9VTY0lE9unwrSY">
-                </template>
 
             </template>
 
@@ -706,6 +703,7 @@
                     tracking: {},
                     racerdata: {},
                     stat: {},
+                    userinfo: {},
                     tableMode: 'realtime',
                     modeButton: 'Switch to Finish Mode',
                     chatinput: '',
@@ -722,16 +720,31 @@
                     menuopen: false,
                     crowdpageindex: 0,
                     nowlocationid: '',
+                    isDangerous: {},
                     nowdate: ''
                 }
             },
             methods: {
-                timeleft(date) {
-
+                losttrack(date) {
                     const nowdate = this.nowdate
                     date = new Date(date)
-                    return this.dhm(date - nowdate)
-
+                    return this.dhm(nowdate - date)
+                },
+                checkdangerous(date) {
+                    const nowdate = new Date()
+                    date = new Date(date)
+                    return nowdate - date > 15 * 60 * 1000
+                },
+                async nextcrowduser() {
+                    const userinfo = this.userinfo
+                    const userCoor = this.getUserCoor()
+                    this.crowdpageindex = (this.crowdpageindex + 1) % (this.crowd[this.nowlocationid].length)
+                    const crowduserid = this.crowd[this.nowlocationid][this.crowdpageindex]
+                    this.nowuserprofile = await this.getUserProfile(crowduserid)
+                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: this.nowlocationid}
+                },
+                padTo2Digits(num) {
+                    return num.toString().padStart(2, '0');
                 },
                 dhm(t) {
                     var cd = 24 * 60 * 60 * 1000,
@@ -750,16 +763,23 @@
                     }
                     return (d ? d + 'd ' : '') + pad(h) + "h " + pad(m) + "m " + Math.floor(t / 1000 % 60) + 's'
                 },
-                async nextcrowduser() {
-                    const userinfo = this.racerdatabyid()
-                    const userCoor = this.getUserCoor()
-                    this.crowdpageindex = (this.crowdpageindex + 1) % (this.crowd[this.nowlocationid].length)
-                    const crowduserid = this.crowd[this.nowlocationid][this.crowdpageindex]
-                    this.nowuserprofile = await this.getUserProfile(crowduserid)
-                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: this.nowlocationid}
-                },
-                padTo2Digits(num) {
-                    return num.toString().padStart(2, '0');
+                convertMsToTime(milliseconds) {
+                    let seconds = Math.floor(milliseconds / 1000);
+                    let minutes = Math.floor(seconds / 60);
+                    let hours = Math.floor(minutes / 60);
+
+                    seconds = seconds % 60;
+                    minutes = minutes % 60;
+
+                    // 👇️ If you don't want to roll hours over, e.g. 24 to 00
+                    // 👇️ comment (or remove) the line below
+                    // commenting next line gets you `24:00:00` instead of `00:00:00`
+                    // or `36:15:31` instead of `12:15:31`, etc.
+                    hours = hours % 24;
+
+                    return `${this.padTo2Digits(hours)}:${this.padTo2Digits(minutes)}:${this.padTo2Digits(
+                        seconds,
+                    )}`;
                 },
                 formatDate(date) {
                     date = new Date(date)
@@ -978,6 +998,7 @@
                         let userinfo = this.racerdatabyid()
                         let userCoor = this.getUserCoor()
                         let userids = []
+                        this.userinfo = this.racerdatabyid()
                         this.crowd = {}
 
                         for (j in userCoor) {
@@ -1101,7 +1122,7 @@
 
 
                     }, 100);
-                    this.sortByRanking()
+
                 }, generateName(id) {
                     if (id == 'system') return 'Trailme'
                     console.log(this.nameList)
@@ -1169,11 +1190,10 @@
             'Girl', 'Vortex', 'Paradox'
         ];
 
-
-
         setInterval(() => {
             VueApp.$data.nowdate = new Date()
         }, 1000);
+
 
 
     </script>
