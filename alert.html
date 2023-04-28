@@ -542,8 +542,7 @@
                     background: white;" :src="nowuserprofile.profilePicture">
                 </div>
                 <div class="col-8">
-                    <h3>Racer Details <span
-                            v-if="crowd[nowuserprofile.locationid]&&crowd[nowuserprofile.locationid].length>1">({{crowdpageindex+1}}/{{crowd[nowuserprofile.locationid].length}})</span>
+                    <h3>Racer Details
                     </h3>
                     <div class="row">
                         <div class="col-4">Nickname: </div>
@@ -551,6 +550,10 @@
                     </div>
 
 
+                    <div class="row">
+                        <div class="col-4">Emergency: </div>
+                        <div class="col-8">{{nowuserprofile.emergencyContact}}</div>
+                    </div>
 
                     <div class="row">
                         <div class="col-4">Experience: </div>
@@ -566,11 +569,6 @@
                         <div class="col-4">Nationality: </div>
                         <div class="col-8"> {{nowuserprofile.nationality}} <img style="width: 30px;"
                                 :src="'https://flagsapi.com/'+nowuserprofile.nationality+'/flat/64.png'"></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-4">Experience: </div>
-                        <div class="col-8"> {{nowuserprofile.experienceLevel}}</div>
                     </div>
 
 
@@ -601,7 +599,7 @@
         </div>
 
 
-        <div id="menu" v-if="racerdata.data"
+        <div id="menu" v-if="racerdata.data && !nowuserprofile.profilePicture"
             style="position: fixed; top: 50%; width: 80vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
             <h2 v-if="racerdata.courseDetails" style="margin: 20px;">
                 {{racerdata.courseDetails.name}}</h2>
@@ -639,7 +637,8 @@
                 <template
                     v-for="item in Object.keys(userinfo).map((key) => userinfo[key]).sort((a,b)=>b.createdAt.seconds-a.createdAt.seconds)">
                     <template v-if="item.racerStatus!='FINISH'">
-                        <div :class="{row: true, dangerous: checkdangerous(item.createdAt.seconds*1000)}"
+                        <div @click="getemergencynum(item.userId)"
+                            :class="{row: true, dangerous: checkdangerous(item.createdAt.seconds*1000)}"
                             style="padding: 10px 20px; width: 95%; font-size: 13px;">
                             <!-- isDangerous[item.userId] -->
                             <div class="col-2">{{item.nickname}}</div>
@@ -987,6 +986,9 @@
                         }
                     }
                     return userCoor
+                },
+                async getemergencynum(tempuserid) {
+                    VueApp.$data.nowuserprofile = await VueApp.getUserProfile(tempuserid)
                 },
                 updatemap() {
                     setTimeout(() => {
