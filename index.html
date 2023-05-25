@@ -629,7 +629,7 @@
                     <div class="row" style="padding: 10px 20px; width: 95%;">
                         <div class="col-5">Name</div>
                         <div class="col-5">Bib</div>
-                        <div class="col-2">Show </div>
+                        <div class="col-2">Show</div>
 
                     </div>
                     <template v-for="item in racerdata.data"
@@ -639,6 +639,7 @@
                             <div class="col-5">{{item.nickname}}</div>
                             <!-- <div class="col-5">{{item.racerStatus}}</div> -->
                             <div class="col-5">{{item.bibNumber}}</div>
+
                             <div class="col-2">
                                 <label class="container">
                                     <input type="checkbox" v-model="tracking[item.userId]">
@@ -722,7 +723,8 @@
                     menuopen: false,
                     crowdpageindex: 0,
                     nowlocationid: '',
-                    nowdate: ''
+                    nowdate: '',
+                    trackingtopfive: true
                 }
             },
             methods: {
@@ -979,7 +981,9 @@
                         let userCoor = this.getUserCoor()
                         let userids = []
                         this.crowd = {}
+                        this.sortByRanking()
 
+                        let trackingcounter = 0;
                         for (j in userCoor) {
                             if (!!this.tracking[j]) {
                                 if (userinfo[j].racerStatus == 'START' || userinfo[j].racerStatus == 'RACING') {
@@ -989,6 +993,9 @@
                                 }
                             }
                         }
+
+
+
 
                         for (j in userCoor) {
 
@@ -1101,7 +1108,7 @@
 
 
                     }, 100);
-                    this.sortByRanking()
+
                 }, generateName(id) {
                     if (id == 'system') return 'Trailme'
                     console.log(this.nameList)
