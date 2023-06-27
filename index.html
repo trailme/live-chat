@@ -546,6 +546,63 @@
             style="position: fixed; left: 0; right: 0; margin-left: auto; margin-right: auto; background: rgba(255, 255, 255, 0.674); border-radius: 10px; width: 80vw; text-align: center; padding: 20px 20px; top: 100px; opacity: 1;">
             <h1>Select {{chooselvl}}</h1>
             <div v-if="chooselvl=='Event'" class="row" style="height: calc(100vh - 250px); overflow-y: scroll;">
+                <div v-if="eventdata.length<=0">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        style="margin:auto;background:rgba(255, 255, 255, 0);display:block;" width="204px"
+                        height="204px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                        <circle cx="77" cy="50" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.8571428571428571s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.8571428571428571s">
+                            </animate>
+                        </circle>
+                        <circle cx="66.8342246501858" cy="71.10945002663681" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.7142857142857143s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.7142857142857143s">
+                            </animate>
+                        </circle>
+                        <circle cx="43.991934783179516" cy="76.32305362890924" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.5714285714285714s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.5714285714285714s">
+                            </animate>
+                        </circle>
+                        <circle cx="25.673840566634688" cy="61.71486095617407" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.42857142857142855s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.42857142857142855s">
+                            </animate>
+                        </circle>
+                        <circle cx="25.673840566634684" cy="38.285139043825936" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.2857142857142857s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.2857142857142857s">
+                            </animate>
+                        </circle>
+                        <circle cx="43.9919347831795" cy="23.67694637109076" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.14285714285714285s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.14285714285714285s">
+                            </animate>
+                        </circle>
+                        <circle cx="66.8342246501858" cy="28.890549973363193" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="0s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="0s"></animate>
+                        </circle>
+                    </svg>
+                </div>
+
+
+
                 <div @click="chooseevent(item)" v-for="item in eventdata.filter(x=>x.isPublished)"
                     class="col-3 myselection" style=" margin-bottom: 10px;">
                     <div><img style="width: 350px; height: 100px; border-radius: 5px; object-fit: cover;"
@@ -558,6 +615,60 @@
                 </div>
             </div>
             <div v-if="chooselvl=='Course'" class="row" style="height: calc(100vh - 250px); overflow-y: scroll;">
+                <div v-if="coursedata.length<=0">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        style="margin:auto;background:rgba(255, 255, 255, 0);display:block;" width="204px"
+                        height="204px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                        <circle cx="77" cy="50" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.8571428571428571s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.8571428571428571s">
+                            </animate>
+                        </circle>
+                        <circle cx="66.8342246501858" cy="71.10945002663681" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.7142857142857143s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.7142857142857143s">
+                            </animate>
+                        </circle>
+                        <circle cx="43.991934783179516" cy="76.32305362890924" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.5714285714285714s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.5714285714285714s">
+                            </animate>
+                        </circle>
+                        <circle cx="25.673840566634688" cy="61.71486095617407" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.42857142857142855s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.42857142857142855s">
+                            </animate>
+                        </circle>
+                        <circle cx="25.673840566634684" cy="38.285139043825936" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.2857142857142857s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.2857142857142857s">
+                            </animate>
+                        </circle>
+                        <circle cx="43.9919347831795" cy="23.67694637109076" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="-0.14285714285714285s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="-0.14285714285714285s">
+                            </animate>
+                        </circle>
+                        <circle cx="66.8342246501858" cy="28.890549973363193" fill="#008cd1" r="7">
+                            <animate attributeName="r" values="4.2;4.2;7;4.2;4.2" times="0;0.1;0.2;0.3;1" dur="1s"
+                                repeatCount="indefinite" begin="0s"></animate>
+                            <animate attributeName="fill" values="#008cd1;#008cd1;#2da04d;#008cd1;#008cd1"
+                                repeatCount="indefinite" times="0;0.1;0.2;0.3;1" dur="1s" begin="0s"></animate>
+                        </circle>
+                    </svg>
+                </div>
                 <div v-for="item in coursedata" class="col-3 myselection"
                     style=" margin-bottom: 10px; max-height: 150px;">
                     <a :href="'?courseid='+item._id" style="color: black;">

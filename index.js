@@ -6,8 +6,31 @@ const { Server } = require('socket.io')
 const io = new Server(server)
 const axios = require('axios')
 const { sendnoti } = require('./slack.js')
+const { QuickDB } = require('quick.db')
+const { resolve } = require('path')
+const localdb = new QuickDB()
 
 var connectCounter = 0
+
+async function updatecache(urlpath) {
+  return new Promise((resolve, reject) => {
+    var config = {
+      method: 'get',
+      url: 'https://1f53v2wgyk.execute-api.us-east-1.amazonaws.com/' + urlpath,
+      headers: {},
+    }
+
+    axios(config)
+      .then(function (response) {
+        localdb.set(urlpath, JSON.stringify(response.data))
+        resolve(response.data)
+        // console.log(JSON.stringify(response.data))
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  })
+}
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
@@ -17,40 +40,20 @@ app.get('/alert', (req, res) => {
   res.sendFile(__dirname + '/alert.html')
 })
 
-app.get('/getallevents', (req, res) => {
-  var config = {
-    method: 'get',
-    url: 'https://1f53v2wgyk.execute-api.us-east-1.amazonaws.com/getallevents',
-    headers: {},
-  }
-
-  axios(config)
-    .then(function (response) {
-      res.send(response.data)
-      // console.log(JSON.stringify(response.data))
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
+app.get('/getallevents', async (req, res) => {
+  const urlpath = 'getallevents'
+  const localeventlist = await localdb.get(urlpath)
+  if (localeventlist) res.send(localeventlist)
+  const updatedresult = await updatecache(urlpath)
+  if (!localeventlist) res.send(updatedresult)
 })
 
-app.get('/getcourses/:eventid', (req, res) => {
-  var config = {
-    method: 'get',
-    url:
-      'https://1f53v2wgyk.execute-api.us-east-1.amazonaws.com/getcoursebyeventid/' +
-      req.params.eventid,
-    headers: {},
-  }
-
-  axios(config)
-    .then(function (response) {
-      res.send(response.data)
-      // console.log(JSON.stringify(response.data))
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
+app.get('/getcourses/:eventid', async (req, res) => {
+  const urlpath = 'getcoursebyeventid/' + req.params.eventid
+  const localeventlist = await localdb.get(urlpath)
+  if (localeventlist) res.send(localeventlist)
+  const updatedresult = await updatecache(urlpath)
+  if (!localeventlist) res.send(updatedresult)
 })
 
 app.use(express.static('public'))
