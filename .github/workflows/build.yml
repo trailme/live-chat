@@ -1,36 +1,44 @@
 name: CI
 on: [push]
 jobs:
-  # test:
-  #   ...
   deploy:
     name: "Deploy to lightsail"
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/ && chmod 700 ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/deploy.key
-          chmod 600 ~/.ssh/deploy.key
-          cat >> ~/.ssh/config << END
-          Host deploy
-            HostName ${{ secrets.SERVER_HOST }}
-            User ${{ secrets.SERVER_USER }}
-            IdentityFile ~/.ssh/deploy.key
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.SERVER_USER }}
-          SSH_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SERVER_HOST }}
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_PRIVATE_KEY }}
+        script: |
+          cd live-chat && git pull
+          npm install
+          pm2 restart 0
+      # - name: Configure SSH
+      #   run: |
+      #     mkdir -p ~/.ssh/ && chmod 700 ~/.ssh
+      #     echo "$SSH_KEY" > ~/.ssh/deploy.key
+      #     chmod 600 ~/.ssh/deploy.key
+      #     cat >> ~/.ssh/config << END
+      #     Host deploy
+      #       HostName $SSH_HOST
+      #       User $SSH_USER
+      #       IdentityFile ~/.ssh/deploy.key
+      #       StrictHostKeyChecking no
+      #     END
+      #   env:
+      #     SSH_USER: ${{ secrets.SERVER_USER }}
+      #     SSH_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SERVER_HOST }}
 
-      - name: git pull
-        run: ssh deploy 'cd live-chat && git pull'
+      # - name: git pull
+      #   run: ssh deploy 'cd live-chat && git pull'
 
-      - name: install package
-        run: ssh deploy 'npm i'
+      # - name: install package
+      #   run: ssh deploy 'npm i'
 
-      - name: restart the server
-        # if: ${{ always() }}
-        run: ssh deploy 'pm2 restart 0'
+      # - name: restart the server
+      #   # if: ${{ always() }}
+      #   run: ssh deploy 'pm2 restart 0'
