@@ -15,12 +15,11 @@ jobs:
           chmod 600 ~/.ssh/deploy.key
           cat >> ~/.ssh/config << END
           Host deploy
-            HostName $SSH_HOST
-            User $SSH_USER
+            HostName ${{ secrets.SERVER_HOST }}
+            User ${{ secrets.SERVER_USER }}
             IdentityFile ~/.ssh/deploy.key
             StrictHostKeyChecking no
           END
-          echo "::debug::$SSH_USER"
         env:
           SSH_USER: ${{ secrets.SERVER_USER }}
           SSH_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
