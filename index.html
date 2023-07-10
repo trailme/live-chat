@@ -543,7 +543,7 @@
 
 
         <div v-if="!courseid"
-            style="position: fixed; left: 0; right: 0; margin-left: auto; margin-right: auto; background: rgba(255, 255, 255, 0.674); border-radius: 10px; width: 80vw; text-align: center; padding: 20px 20px; top: 100px; opacity: 1;">
+            style="position: fixed; left: 0; right: 0; margin-left: auto; margin-right: auto; background: rgba(255, 255, 255, 0.674); border-radius: 10px; width: 80vw; text-align: center; padding: 20px 20px; top: 100px; opacity: 1; max-width: 1000px;">
             <h1>Select {{chooselvl}}</h1>
             <div v-if="chooselvl=='Event'" class="row" style="height: calc(100vh - 250px); overflow-y: scroll;">
                 <div v-if="eventdata.length<=0">
