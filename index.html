@@ -516,14 +516,14 @@
 
 
         <div id="onlinestatus"
-            style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 120px; left: 20px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;">
+            style="background: rgba(255, 255, 255, 0.861); position: fixed; top: 20px; left: 20px; border-radius: 5px; z-index:999; padding: 5px 10px; opacity: .85;">
             <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
             </div>
             {{connectCounter}}
         </div>
 
         <div :class="{clickafter: sidepanelmode=='chat', clickbefore: !(sidepanelmode=='chat')}"
-            style=" position: fixed; top: 120px; left: 80px; border-radius: 5px; z-index:999; padding: 5px 10px;"
+            style=" position: fixed; top: 20px; left: 80px; border-radius: 5px; z-index:999; padding: 5px 10px;"
             @click="switchsidepanelmode('chat')">
             <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
             </div> -->
@@ -533,7 +533,7 @@
 
 
         <div :class="{clickafter: sidepanelmode=='tracking', clickbefore: !(sidepanelmode=='tracking')}"
-            style="position: fixed; top: 120px; left: 160px; border-radius: 5px; z-index:999; padding: 5px 10px;"
+            style="position: fixed; top: 20px; left: 160px; border-radius: 5px; z-index:999; padding: 5px 10px;"
             @click="switchsidepanelmode('tracking')">
             <!-- <div style="width: 10px; height: 10px; border-radius: 50%; background: #2da04d; display: inline-block;">
         </div> -->
