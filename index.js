@@ -36,6 +36,10 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })
 
+app.get('/entrylist', (req, res) => {
+  res.sendFile(__dirname + '/entrylist.html')
+})
+
 app.get('/alert', (req, res) => {
   res.sendFile(__dirname + '/alert.html')
 })
