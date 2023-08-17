@@ -6,7 +6,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Trailme - Leaderboard</title>
+    <style>
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.svg#webfont) format("svg");
+            font-weight: 300;
+            font-style: normal;
+        }
 
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Italic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Italic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Italic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Italic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Italic.svg#webfont) format("svg");
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Light.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Light.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Light.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Light.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Light.svg#webfont) format("svg");
+            font-weight: 200;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-LightItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-LightItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-LightItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-LightItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-LightItalic.svg#webfont) format("svg");
+            font-weight: 200;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Thin.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Thin.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Thin.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Thin.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Thin.svg#webfont) format("svg");
+            font-weight: 100;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-ThinItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-ThinItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-ThinItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-ThinItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-ThinItalic.svg#webfont) format("svg");
+            font-weight: 100;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Medium.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Medium.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Medium.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Medium.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Medium.svg#webfont) format("svg");
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-MediumItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-MediumItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-MediumItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-MediumItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-MediumItalic.svg#webfont) format("svg");
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Bold.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Bold.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Bold.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Bold.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Bold.svg#webfont) format("svg");
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BoldItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BoldItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BoldItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BoldItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BoldItalic.svg#webfont) format("svg");
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBold.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBold.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBold.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBold.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBold.svg#webfont) format("svg");
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBoldItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBoldItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBoldItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBoldItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-XBoldItalic.svg#webfont) format("svg");
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Black.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Black.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Black.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Black.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-Black.svg#webfont) format("svg");
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "Prometo";
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BlackItalic.eot);
+            src: url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BlackItalic.eot#iefix) format("embedded-opentype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BlackItalic.woff) format("woff"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BlackItalic.ttf) format("truetype"), url(https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo-BlackItalic.svg#webfont) format("svg");
+            font-weight: 700;
+            font-style: italic;
+        }
+
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            width: 100vw;
+            font-family: 'Prometo', Arial;
+            /* padding-top: 150px; */
+            /* (https://staging.trailme.com.hk/sites/default/themes/trail/fonts/prometo/Prometo.eot) */
+        }
+    </style>
     <!--== Favicon ==-->
     <!-- <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon" /> -->
 
@@ -237,6 +359,25 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+
+        div::-webkit-scrollbar {
+            display: none;
+        }
+
+        .courseselect {
+            width: 120px;
+            background: rgba(255, 255, 255, 0.781);
+            text-align: center;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .courseselect:hover {
+            cursor: pointer;
+            background: white;
+        }
     </style>
 
     <!--[if lt IE 9]>
@@ -299,13 +440,40 @@
         const queryString = window.location.search
         const urlParams = new URLSearchParams(queryString)
         const courseid = urlParams.get('courseid')
+        const eventid = urlParams.get('eventid')
         const zoom = urlParams.get('zoom')
         console.log(courseid)
+        console.log(eventid)
         let firstin = true
         // var map
 
+
+        async function getcoursesbyeventid() {
+            const url = 'https://1f53v2wgyk.execute-api.us-east-1.amazonaws.com/getcoursebyeventid/' + eventid
+            const courselist = await new Promise((resolve, reject) => {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Typical action to be performed when the document is ready:
+                        resolve(JSON.parse(xhttp.responseText))
+                    }
+                };
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            })
+            VueApp.$data.courselist = courselist.data
+            return courselist.data
+        }
+
+
+
         setTimeout(() => {
             VueApp.$data.courseid = courseid ? courseid : false
+            VueApp.$data.eventid = eventid ? eventid : false
+            if (eventid) {
+                const courselist = getcoursesbyeventid(eventid)
+            }
+
         }, 100);
 
 
@@ -542,7 +710,7 @@
         </div>
 
 
-        <div v-if="!courseid"
+        <div v-if="!courseid && !eventid"
             style="position: fixed; left: 0; right: 0; margin-left: auto; margin-right: auto; background: rgba(255, 255, 255, 0.674); border-radius: 10px; width: 80vw; text-align: center; padding: 20px 20px; top: 100px; opacity: 1; max-width: 1000px;">
             <h1>Select {{chooselvl}}</h1>
             <div v-if="chooselvl=='Event'" class="row" style="height: calc(100vh - 250px); overflow-y: scroll;">
@@ -763,11 +931,26 @@
 
         </div>
 
+        <div style=" height: calc(100vh - 75px); overflow: scroll; position: fixed; top: 75px; left: 20px; z-index: 9;">
+
+
+            <div v-for="item in courselist" style="" class="courseselect">
+                <a style="color: black;" :href="'/?courseid='+item._id+'&eventid='+eventid">
+                    <img :src="item.coursePicture"
+                        style="width: 70px;height: 70px; border-radius: 10px; margin-bottom: 10px; margin-top: 5px;">
+                    <h1 style="font-size: 12px;">{{item.name}}</h1>
+                </a>
+            </div>
+
+
+
+        </div>
 
         <div id="menu" v-if="racerdata.data"
-            style="position: fixed; top: 50%; width: 30vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;">
+            style="position: fixed; top: 50%; width: 30vw; height: 80vh; -ms-transform: translateY(-50%); transform: translateY(-50%); background: rgba(255, 255, 255, 0.89); right: 10px; z-index:999; overflow-y: scroll; overflow-x: hidden; border-radius: 10px; background: linear-gradient(#008cd1,#2da04d); color: white; opacity: .9;     background: rgb(0 140 209 / 81%)">
             <h2 v-if="racerdata.courseDetails" style="margin: 20px;">
                 {{racerdata.courseDetails.name}}</h2>
+
             <template v-if="sidepanelmode=='tracking'">
                 <template v-if="!(racerdata.data.filter(x=>x.racerStatus=='START'||x.racerStatus=='RACING').length==0)">
                     <div class="row">
@@ -894,6 +1077,7 @@
                     trackingtopfive: true,
                     eventdata: [],
                     coursedata: [],
+                    courselist: [],
                     chooselvl: 'Event'
                 }
             },
