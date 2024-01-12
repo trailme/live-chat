@@ -1501,7 +1501,8 @@
                             const eventdata = (JSON.parse(this.responseText)).data;
                             VueApp.$data.eventdata = eventdata
                             VueApp.$data.eventdata = VueApp.$data.eventdata.filter(x => {
-                                if (x.name.indexOf('TGR Tigershead') != -1)
+                                if (!x.name) return false
+                                if (x.name.indexOf('Weez') != -1)
                                     return true
                                 else return false
                             })
