@@ -878,10 +878,6 @@
 
 
 
-                    <div class="row">
-                        <div class="col-4">Experience: </div>
-                        <div class="col-8"> {{nowuserprofile.experienceLevel}}</div>
-                    </div>
 
                     <div class="row">
                         <div class="col-4">Bib: </div>
@@ -899,6 +895,15 @@
                         <div class="col-8"> {{nowuserprofile.experienceLevel}}</div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-4">Distance: </div>
+                        <div class="col-8"> {{nowuserprofile.distance?nowuserprofile.distance:'/'}}</div>
+                    </div>
+                    <!-- 
+                    <div class="row">
+                        <div class="col-4">all: </div>
+                        <div class="col-8"> {{nowuserprofile}}</div>
+                    </div> -->
 
 
 
