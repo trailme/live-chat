@@ -1461,6 +1461,10 @@
                                 // alert(JSON.stringify(userinfo[tempuserid]));
                                 const locationid = marker.join(',')
                                 this.nowlocationid = locationid
+                                userinfo = this.racerdatabyid()
+                                userCoor = this.getUserCoor()
+                                console.log(userinfo[tempuserid])
+                                console.log(userCoor[tempuserid])
                                 if (VueApp.$data.crowd[locationid].length == 1) {
                                     VueApp.$data.nowuserprofile = await VueApp.getUserProfile(tempuserid)
                                     VueApp.$data.nowuserprofile = {...VueApp.$data.nowuserprofile, ...userinfo[tempuserid], ...userCoor[tempuserid], locationid: locationid}
@@ -1507,7 +1511,7 @@
                             VueApp.$data.eventdata = eventdata
                             VueApp.$data.eventdata = VueApp.$data.eventdata.filter(x => {
                                 if (!x.name) return false
-                                if (x.name.indexOf('Weez') != -1)
+                                if (x.name.indexOf('Weez') != -1 || x.name.indexOf('MacLehose') != -1)
                                     return true
                                 else return false
                             })
