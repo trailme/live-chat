@@ -387,11 +387,11 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script type="module">
 
-        import {initializeApp} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 
-        import {getAnalytics} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 
-        import {doc, getDoc, onSnapshot, getFirestore} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { doc, getDoc, onSnapshot, getFirestore } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 
 
@@ -551,7 +551,7 @@
                 startlivetracking()
                 onSnapshot(
                     doc(db, "Beacons", courseid),
-                    {includeMetadataChanges: true},
+                    { includeMetadataChanges: true },
                     (doc) => {
 
                         let nowdata = doc.data()
@@ -626,7 +626,7 @@
         let userIdDetails = {}
         const unsub = onSnapshot(
             doc(db, "LeaderBoardLive", courseid),
-            {includeMetadataChanges: true},
+            { includeMetadataChanges: true },
             (doc) => {
                 console.log('updated')
                 let nowdata = doc.data()
@@ -666,7 +666,7 @@
         function startlivetracking() {
             const unsub2 = onSnapshot(
                 doc(db, "LiveMap", courseid),
-                {includeMetadataChanges: true},
+                { includeMetadataChanges: true },
                 (doc) => {
                     let nowdata = doc.data()
                     VueApp.$data.livemapdata = nowdata
@@ -1049,7 +1049,7 @@
 
     <script>
         var map
-        const {createApp} = Vue
+        const { createApp } = Vue
 
         const VueApp = createApp({
             async mounted() {
@@ -1102,7 +1102,7 @@
                         d = Math.floor(t / cd),
                         h = Math.floor((t - d * cd) / ch),
                         m = Math.round((t - d * cd - h * ch) / 60000),
-                        pad = function (n) {return n < 10 ? '0' + n : n;};
+                        pad = function (n) { return n < 10 ? '0' + n : n; };
                     if (m === 60) {
                         h++;
                         m = 0;
@@ -1119,7 +1119,7 @@
                     this.crowdpageindex = (this.crowdpageindex + 1) % (this.crowd[this.nowlocationid].length)
                     const crowduserid = this.crowd[this.nowlocationid][this.crowdpageindex]
                     this.nowuserprofile = await this.getUserProfile(crowduserid)
-                    this.nowuserprofile = {...this.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: this.nowlocationid}
+                    this.nowuserprofile = { ...this.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: this.nowlocationid }
                 },
                 padTo2Digits(num) {
                     return num.toString().padStart(2, '0');
@@ -1237,7 +1237,7 @@
                     if (msg && from) {
                         this.chatlist.push(msg)
                     } else if (this.chatinput) {
-                        socket.emit('chat message', {msg: this.chatinput, from: socket.id});
+                        socket.emit('chat message', { msg: this.chatinput, from: socket.id });
                         this.chatinput = ''
                     }
                 },
@@ -1467,11 +1467,11 @@
                                 console.log(userCoor[tempuserid])
                                 if (VueApp.$data.crowd[locationid].length == 1) {
                                     VueApp.$data.nowuserprofile = await VueApp.getUserProfile(tempuserid)
-                                    VueApp.$data.nowuserprofile = {...VueApp.$data.nowuserprofile, ...userinfo[tempuserid], ...userCoor[tempuserid], locationid: locationid}
+                                    VueApp.$data.nowuserprofile = { ...VueApp.$data.nowuserprofile, ...userinfo[tempuserid], ...userCoor[tempuserid], locationid: locationid }
                                 } else {
                                     const crowduserid = VueApp.$data.crowd[locationid][this.crowdpageindex]
                                     VueApp.$data.nowuserprofile = await VueApp.getUserProfile(crowduserid)
-                                    VueApp.$data.nowuserprofile = {...VueApp.$data.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: locationid}
+                                    VueApp.$data.nowuserprofile = { ...VueApp.$data.nowuserprofile, ...userinfo[crowduserid], ...userCoor[crowduserid], locationid: locationid }
                                 }
 
                             });
@@ -1511,7 +1511,7 @@
                             VueApp.$data.eventdata = eventdata
                             VueApp.$data.eventdata = VueApp.$data.eventdata.filter(x => {
                                 if (!x.name) return false
-                                if (x.name.indexOf('MacLehose') != -1 || x.name.indexOf('Tigershead') != -1)
+                                if (x.name.indexOf('MacLehose') != -1 || x.name.indexOf('New Year') != -1)
                                     return true
                                 else return false
                             })
